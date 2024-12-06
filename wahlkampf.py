@@ -61,9 +61,9 @@ def perform_action(partei, action):
     change = 0
     if action in actions:
         if action == "Wahlkampfveranstaltung organisieren":
-            own_weight = random.uniform(-1 + (0.2 * kandidaten[partei]["kompetenz"] + 0.7 * kandidaten[partei]["beliebtheit"] +0.1 * kandidaten[partei]["ambition"]), (0.2 * kandidaten[partei]["kompetenz"] + 0.7 * kandidaten[partei]["beliebheit"] +0.1 * kandidaten[partei]["ambition"]))
+            own_weight = random.uniform(-1 + (0.2 * kandidaten[partei]["kompetenz"] + 0.7 * kandidaten[partei]["beliebtheit"] +0.1 * kandidaten[partei]["ambition"])/100, (0.2 * kandidaten[partei]["kompetenz"] + 0.7 * kandidaten[partei]["beliebtheit"] +0.1 * kandidaten[partei]["ambition"])/100)
             print(0.2 * kandidaten[partei]["kompetenz"])
-            print(0.7 * kandidaten[partei]["beliebheit"])
+            print(0.7 * kandidaten[partei]["beliebtheit"])
             print(0.1 * kandidaten[partei]["ambition"])
         else:
             own_weight = random.uniform(-1,1) 
