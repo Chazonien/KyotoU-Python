@@ -3,6 +3,7 @@ from tkinter import messagebox
 import sys
 import random
 import subprocess
+from main_gui import kandidaten
 
 # Argument: Ausgewählte Partei
 if len(sys.argv) < 2:
@@ -59,7 +60,13 @@ def perform_action(partei, action):
     # Simulate the player's action
     change = 0
     if action in actions:
-        own_weight = random.uniform(-1, 1)  # Normale Aktion
+        if action == "Wahlkampfveranstaltung organisieren":
+            own_weight = random.uniform(-1 + (0.2 * kandidaten[partei]["kompetenz"] + 0.7 * kandidaten[partei]["beliebtheit"] +0.1 * kandidaten[partei]["ambition"]), (0.2 * kandidaten[partei]["kompetenz"] + 0.7 * kandidaten[partei]["beliebheit"] +0.1 * kandidaten[partei]["ambition"]))
+            print(0.2 * kandidaten[partei]["kompetenz"])
+            print(0.7 * kandidaten[partei]["beliebheit"])
+            print(0.1 * kandidaten[partei]["ambition"])
+        else:
+            own_weight = random.uniform(-1,1) 
     elif action == special_actions[partei] and not special_action_used[partei]:
         own_weight = random.uniform(0, 2)  # Spezielle Aktion
         special_action_used[partei] = True  # Spezialaktion wurde genutzt
