@@ -2,7 +2,7 @@ import tkinter as tk
 import os
 from tkinter import messagebox
 from PIL import Image, ImageTk
-import subprocess  # To run wahlkampf.py
+import subprocess
 
 # Kandidatendaten
 kandidaten = {
