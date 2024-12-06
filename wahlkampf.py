@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 import sys
 import random
+import subprocess
 
 # Argument: Ausgewählte Partei
 if len(sys.argv) < 2:
@@ -30,13 +31,13 @@ actions = [
 
 # Spezielle Aktionen pro Partei
 special_actions = {
-    "SPD": "Soziale Reform ankündigen",
-    "CDU/CSU": "Steuersenkung versprechen",
-    "Grüne": "Klimaplan hervorheben",
-    "FDP": "Wirtschaftsstrategie vorstellen",
-    "AfD": "Sicherheitspolitik betonen",
-    "Linke": "Mindestlohn erhöhen",
-    "BSW": "Unabhängigkeitskampagne starten"
+    "SPD": "Daran kann ich mich leider nicht erinnern!",
+    "CDU/CSU": "DiE GrÜnEn?!?",
+    "Grüne": "Wir brauchen eine 360 Grad Wende",
+    "FDP": "Christian Linder Schwarz-Weiß Bild",
+    "AfD": "Verfassungschutzmitglieder treten der Partei bei",
+    "Linke": "Gregor Gysi rausholen",
+    "BSW": "Bitte Putin um ein bisschen Hilfe im Wahlkampf"
 }
 
 special_action_used = {party: False for party in polls}  # Verfolgung der Spezialaktionen
