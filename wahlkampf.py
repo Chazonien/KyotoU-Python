@@ -23,22 +23,29 @@ polls = {
 
 # Politische Aktionen
 actions = [
-    "Wahlkampfveranstaltung organisieren",
-    "Werbung in sozialen Medien schalten",
-    "Debatte vorbereiten",
-    "Flyer verteilen",
+    "Wahlkampfveranstaltung",
+    "Werbung in sozialen Medien",
+    "Debatte",
+    "Flyer & Werbegeschenke",
     "Spenden sammeln"
 ]
 
 # Spezielle Aktionen pro Partei
 special_actions = {
-    "SPD": "Daran kann ich mich leider nicht erinnern!",
-    "CDU/CSU": "DiE GrÜnEn?!?",
+    "SPD": "Wahlkampf: Daran kann ich mich leider nicht erinnern!",
+    "SPD": "Finanzierung: Spende von der Warburg-Bank P.S. Danke Olaf",
+    "CDU/CSU": "Wahlkampf: DiE GrÜnEn?!?",
+    "CDU/CSU": "Finanzierung: Haben wir noch Reserven vom Maskendeal?",
     "Grüne": "Wir brauchen eine 360 Grad Wende",
+    "Grüne": "Verkauf hauseigener Homöpathiker",
     "FDP": "Christian Linder Schwarz-Weiß Bild",
+    "FDP": "Beim Porsche-Vorstand anrufen",
     "AfD": "Verfassungschutzmitglieder treten der Partei bei",
+    "AfD": "Anspruch auf Gold aus schweizer Banken erheben",
     "Linke": "Gregor Gysi rausholen",
-    "BSW": "Bitte Putin um ein bisschen Hilfe im Wahlkampf"
+    "Linke": "Geld erben, weil Toter die Nachfahren verarschen will",
+    "BSW": "Putin ein bisschen um Hilfe bitten",
+    "BSW": "Porsche Klaus macht Kontakte klar"
 }
 
 special_action_used = {party: False for party in polls}  # Verfolgung der Spezialaktionen
@@ -60,7 +67,7 @@ def perform_action(partei, action):
     # Simulate the player's action
     change = 0
     if action in actions:
-        if action == "Wahlkampfveranstaltung organisieren":
+        if action == "Wahlkampfveranstaltung":
             own_weight = random.uniform(-1 + (0.2 * kandidaten[partei]["kompetenz"] + 0.7 * kandidaten[partei]["beliebtheit"] +0.1 * kandidaten[partei]["ambition"])/100, (0.2 * kandidaten[partei]["kompetenz"] + 0.7 * kandidaten[partei]["beliebtheit"] +0.1 * kandidaten[partei]["ambition"])/100)
             print(0.2 * kandidaten[partei]["kompetenz"])
             print(0.7 * kandidaten[partei]["beliebtheit"])
