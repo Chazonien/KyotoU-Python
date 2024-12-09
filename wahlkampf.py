@@ -5,12 +5,12 @@ import random
 import subprocess
 from main_gui import kandidaten
 
-# Argument: Ausgewählte Partei
+# Argument: Ausgewählte party
 if len(sys.argv) < 2:
-    sys.exit("Fehler: Keine Partei ausgewählt.")
+    sys.exit("Fehler: Keine party ausgewählt.")
 selected_party = sys.argv[1]
 
-# Initiale Umfragewerte der Parteien (sollten immer 100% ergeben)
+# Initiale Umfragewerte der partyen (sollten immer 100% ergeben)
 polls = {
     "SPD": 20,
     "CDU/CSU": 25,
@@ -30,7 +30,7 @@ actions = [
     "Spenden sammeln"
 ]
 
-# Spezielle Aktionen pro Partei
+# Spezielle Aktionen pro party
 special_actions = {
     "SPD": "Wahlkampf: Daran kann ich mich leider nicht erinnern!",
     "SPD": "Finanzierung: Spende von der Warburg-Bank P.S. Danke Olaf",
@@ -40,7 +40,7 @@ special_actions = {
     "Grüne": "Verkauf hauseigener Homöpathiker",
     "FDP": "Christian Linder Schwarz-Weiß Bild",
     "FDP": "Beim Porsche-Vorstand anrufen",
-    "AfD": "Verfassungschutzmitglieder treten der Partei bei",
+    "AfD": "Verfassungschutzmitglieder treten der party bei",
     "AfD": "Anspruch auf Gold aus schweizer Banken erheben",
     "Linke": "Gregor Gysi rausholen",
     "Linke": "Geld erben, weil Toter die Nachfahren verarschen will",
@@ -62,43 +62,43 @@ def normalize_polls():
     for party in polls:
         polls[party] = round(polls[party] / total * 100, 1)
 
-def character_specific_influence(partei, w1, w2, w3):
-    return (w1 * kandidaten[partei]["kompetenz"] + w2 * kandidaten[partei]["beliebtheit"] + w3 * kandidaten[partei]["ambition"])/100
+def character_specific_influence(party, w1, w2, w3):
+    return (w1 * kandidaten[party]["kompetenz"] + w2 * kandidaten[party]["beliebtheit"] + w3 * kandidaten[party]["ambition"])/100
 
 # Aktion ausführen
-def perform_action(partei, action):
+def perform_action(party, action):
     # Simulate the player's action
     if action in actions:
         if action == "Wahlkampfveranstaltung":
-            character_bonus = character_specific_influence(partei, 0.3, 0.5, 0.2)
+            character_bonus = character_specific_influence(party, 0.3, 0.5, 0.2)
             own_weight = random.uniform(-1 + character_bonus, character_bonus)
         elif action == "Werbung in sozialen Medien":
-            character_bonus = character_specific_influence(partei, 0.1, 0.3, 0.6)
+            character_bonus = character_specific_influence(party, 0.1, 0.3, 0.6)
             own_weight = random.uniform(-1 + character_bonus, character_bonus)
         elif action == "Debatte":
-            character_bonus = character_specific_influence(partei, 0.5, 0.2, 0.3)
+            character_bonus = character_specific_influence(party, 0.5, 0.2, 0.3)
             own_weight = random.uniform(-1 + character_bonus, character_bonus)
         elif action == "Flyer und Werbegeschenke":
-            character_bonus = character_specific_influence(partei, 0.3, 0.4, 0.3)
+            character_bonus = character_specific_influence(party, 0.3, 0.4, 0.3)
             own_weight = random.uniform(-1 + character_bonus, character_bonus)
         elif action == "Spenden sammeln":
-            character_bonus = character_specific_influence(partei, 0.1, 0.6, 0.3)
+            character_bonus = character_specific_influence(party, 0.1, 0.6, 0.3)
             own_weight = random.uniform(-1 + character_bonus, character_bonus)
         else:
             own_weight = random.uniform(-1,1) 
-    elif action == special_actions[partei] and not special_action_used[partei]:
+    elif action == special_actions[party] and not special_action_used[party]:
         own_weight = random.uniform(1, 2)  # Spezielle Aktion
-        special_action_used[partei] = True  # Spezialaktion wurde genutzt
+        special_action_used[party] = True  # Spezialaktion wurde genutzt
 
     # Simulate the voter shift for other parties
-    voter_shift_summary, own_change = simulate_voter_shift(partei, own_weight)
-    polls[partei] += own_change
+    voter_shift_summary, own_change = simulate_voter_shift(party, own_weight)
+    polls[party] += own_change
     
     # Normalize after player's action
     normalize_polls()
     # Show the results popup
-    show_results_popup(partei, action, own_change, voter_shift_summary)
-    aktualisiere_umfragen()
+    show_results_popup(party, action, own_change, voter_shift_summary)
+    update_polls()
 
 # Simulation der Wählerbewegung
 def simulate_voter_shift(current_party, own_weight):
@@ -141,7 +141,7 @@ def show_results_popup(player_party, player_action, player_change, voter_shift_s
     results_window.attributes("-fullscreen", True)  # Vollbildmodus
     
     results_text = f"Ihre Aktion für {player_party}: {player_action}\nÄnderung: {player_change:+.1f}%\n\n"
-    results_text += "Andere Parteien:\n"
+    results_text += "Andere partyen:\n"
     
     # Generate actions for the other parties
     for party, change in voter_shift_summary.items():
@@ -156,8 +156,8 @@ def show_results_popup(player_party, player_action, player_change, voter_shift_s
     tk.Button(results_window, text="Schließen", command=results_window.destroy).pack(pady=10)
 
 # Umfragen aktualisieren
-def aktualisiere_umfragen():
-    ergebnisse = "\n".join([f"{partei}: {polls[partei]:.1f}%" for partei in polls])
+def update_polls():
+    ergebnisse = "\n".join([f"{party}: {polls[party]:.1f}%" for party in polls])
     umfrage_label.config(text=f"Aktuelle Umfragewerte:\n{ergebnisse}")
 
 # Hauptfenster erstellen
@@ -172,7 +172,7 @@ header.pack(pady=10)
 # Umfragen-Anzeige
 umfrage_label = tk.Label(root, text="", font=("Arial", 14), justify="left")
 umfrage_label.pack(pady=10)
-aktualisiere_umfragen()
+update_polls()
 
 # Aktionen-Menü
 def zeige_aktionen():
