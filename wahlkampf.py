@@ -62,20 +62,32 @@ def normalize_polls():
     for party in polls:
         polls[party] = round(polls[party] / total * 100, 1)
 
+def character_specific_influence(partei, w1, w2, w3):
+    return (w1 * kandidaten[partei]["kompetenz"] + w2 * kandidaten[partei]["beliebtheit"] + w3 * kandidaten[partei]["ambition"])/100
+
 # Aktion ausführen
 def perform_action(partei, action):
     # Simulate the player's action
-    change = 0
     if action in actions:
         if action == "Wahlkampfveranstaltung":
-            own_weight = random.uniform(-1 + (0.2 * kandidaten[partei]["kompetenz"] + 0.7 * kandidaten[partei]["beliebtheit"] +0.1 * kandidaten[partei]["ambition"])/100, (0.2 * kandidaten[partei]["kompetenz"] + 0.7 * kandidaten[partei]["beliebtheit"] +0.1 * kandidaten[partei]["ambition"])/100)
-            print(0.2 * kandidaten[partei]["kompetenz"])
-            print(0.7 * kandidaten[partei]["beliebtheit"])
-            print(0.1 * kandidaten[partei]["ambition"])
+            character_bonus = character_specific_influence(partei, 0.3, 0.5, 0.2)
+            own_weight = random.uniform(-1 + character_bonus, character_bonus)
+        elif action == "Werbung in sozialen Medien":
+            character_bonus = character_specific_influence(partei, 0.1, 0.3, 0.6)
+            own_weight = random.uniform(-1 + character_bonus, character_bonus)
+        elif action == "Debatte":
+            character_bonus = character_specific_influence(partei, 0.5, 0.2, 0.3)
+            own_weight = random.uniform(-1 + character_bonus, character_bonus)
+        elif action == "Flyer und Werbegeschenke":
+            character_bonus = character_specific_influence(partei, 0.3, 0.4, 0.3)
+            own_weight = random.uniform(-1 + character_bonus, character_bonus)
+        elif action == "Spenden sammeln":
+            character_bonus = character_specific_influence(partei, 0.1, 0.6, 0.3)
+            own_weight = random.uniform(-1 + character_bonus, character_bonus)
         else:
             own_weight = random.uniform(-1,1) 
     elif action == special_actions[partei] and not special_action_used[partei]:
-        own_weight = random.uniform(0, 2)  # Spezielle Aktion
+        own_weight = random.uniform(1, 2)  # Spezielle Aktion
         special_action_used[partei] = True  # Spezialaktion wurde genutzt
 
     # Simulate the voter shift for other parties
