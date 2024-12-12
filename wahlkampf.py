@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+from PIL import Image, ImageTk
 import sys
 import random
 import subprocess
@@ -196,6 +197,18 @@ def zeige_aktionen():
             text=special_actions[selected_party], 
             command=lambda: [perform_action(selected_party, special_actions[selected_party]), aktionen_fenster.destroy()]
         ).pack(pady=10)
+
+bg_path = r"bilder\bundestag.jpg"  # Replace with your image file
+image = Image.open(bg_path)
+screen_width = root.winfo_screenwidth()
+screen_height = root.winfo_screenheight()
+image = image.resize((screen_width, screen_height))
+bg_image = ImageTk.PhotoImage(image)
+
+# Create a Label to display the background image
+bg_label = tk.Label(root, image=bg_image)
+bg_label.lower()
+bg_label.place(x=0, y=0, relwidth=1, relheight=1)
 
 # Aktionen-Button
 tk.Button(root, text="Aktionen durchführen", font=("Arial", 14), command=zeige_aktionen).pack(pady=10)
