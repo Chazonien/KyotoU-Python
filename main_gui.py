@@ -57,70 +57,50 @@ kandidaten = {
     }
 }
 
-# Wahlfunktion
-def waehlen(partei):
-    messagebox.showinfo("Wahl bestätigt", f"Sie haben {kandidaten[partei]['name']} von der {partei} gewählt!")
-    # Nach der Wahl startet der Wahlkampf
-    start_wahlkampf(partei)
+# Globale Variablen
+aktueller_frame = None
+ausgewaehlte_partei = None  # Hier wird die gewählte Partei gespeichert
 
-# Wahlkampf starten
+def waehlen(partei, frame):
+    """Markiert den gewählten Kandidatenrahmen rot und speichert die gewählte Partei."""
+    global aktueller_frame, ausgewaehlte_partei
+
+    # Vorherigen Rahmen zurücksetzen
+    if aktueller_frame:
+        aktueller_frame.config(highlightbackground="black", highlightthickness=2)
+
+    # Neuen Rahmen hervorheben
+    frame.config(highlightbackground="red", highlightthickness=4)
+    aktueller_frame = frame
+
+    # Gewählte Partei speichern
+    ausgewaehlte_partei = partei
+
 def start_wahlkampf(partei):
-    # Führt das Skript wahlkampf.py mit der gewählten Partei als Argument aus
+    """Startet das Wahlkampfskript."""
     try:
+        root.destroy()
         subprocess.Popen(["python", "wahlkampf.py", partei])
-        root.destroy()  # Hauptfenster schließen
     except Exception as e:
         messagebox.showerror("Fehler", f"Der Wahlkampf konnte nicht gestartet werden: {e}")
 
-# Hauptfenster erstellen
-root = tk.Tk()
-root.title("Bundestagswahl 2025")
-root.attributes("-fullscreen", True)  # Fullscreen aktivieren
-
-# Überschrift
-header = tk.Label(root, text="Wählen Sie Ihren Kanzlerkandidaten:", font=("Arial", 16, "bold"))
-header.pack(pady=10)
-
-# Hauptrahmen für die Kandidaten
-main_frame = tk.Frame(root)
-main_frame.pack(expand=True, padx=20, pady=20)
-
-bg_path = r"bilder\bundestag.jpg"  # Replace with your image file
-image = Image.open(bg_path)
-screen_width = root.winfo_screenwidth()
-screen_height = root.winfo_screenheight()
-image = image.resize((screen_width, screen_height))
-bg_image = ImageTk.PhotoImage(image)
-
-# Create a Label to display the background image
-bg_label = tk.Label(root, image=bg_image)
-bg_label.lower()
-bg_label.place(x=0, y=0, relwidth=1, relheight=1)
-
-
-# Kandidaten in einem Grid anordnen
-reihenfolge = list(kandidaten.keys())
-for i, partei in enumerate(reihenfolge):
-    daten = kandidaten[partei]
-    # Frame für jeden Kandidaten
-    frame = tk.Frame(main_frame, borderwidth=2, relief="groove", padx=10, pady=10)
-    frame.grid(row=i // 4, column=i % 4, padx=10, pady=10)  # 4 Spalten, dann nächste Reihe
-
-    # Bild laden
+def erzeuge_kandidaten_frame(parent, partei, daten):
+    """Erstellt einen Frame für einen Kandidaten."""
+    frame = tk.Frame(parent, borderwidth=2, relief="groove", padx=10, pady=10, highlightbackground="black", highlightthickness=2)
+    frame.grid(row=reihenfolge.index(partei) // 4, column=reihenfolge.index(partei) % 4, padx=10, pady=10)
+    
+    # Bild anzeigen
     try:
         if not os.path.exists(daten["bild"]):
             raise FileNotFoundError(f"Bild nicht gefunden: {daten['bild']}")
-        image = Image.open(daten["bild"])
-        image = image.resize((150, 150), Image.Resampling.LANCZOS)  # Pillow 9.1.0 oder neuer
+        image = Image.open(daten["bild"]).resize((150, 150), Image.Resampling.LANCZOS)
         photo = ImageTk.PhotoImage(image)
-        bild_label = tk.Label(frame, image=photo)
-        bild_label.image = photo  # Referenz speichern, um GC zu verhindern
-        bild_label.pack()
-    except Exception as e:
-        print(f"Fehler beim Laden des Bildes für {daten['name']}: {e}")
+        tk.Label(frame, image=photo).pack()
+        frame.image = photo  # Referenz verhindern
+    except:
         tk.Label(frame, text="Bild fehlt!", font=("Arial", 12)).pack()
 
-    # Partei- und Kandidateninformationen
+    # Text-Infos
     tk.Label(frame, text=f"Partei: {partei}", font=("Arial", 14, "bold")).pack(anchor="w")
     tk.Label(frame, text=f"Kandidat: {daten['name']}", font=("Arial", 12)).pack(anchor="w")
     tk.Label(frame, text=f"Kompetenz: {daten['kompetenz']}", font=("Arial", 12)).pack(anchor="w")
@@ -128,11 +108,39 @@ for i, partei in enumerate(reihenfolge):
     tk.Label(frame, text=f"Ambition: {daten['ambition']}", font=("Arial", 12)).pack(anchor="w")
     
     # Wahl-Button
-    tk.Button(frame, text="Wählen", font=("Arial", 12), command=lambda p=partei: waehlen(p)).pack(pady=5)
+    tk.Button(frame, text="Wählen", font=("Arial", 12), command=lambda: waehlen(partei, frame)).pack(pady=5)
+
+def setze_hintergrundbild(root, pfad):
+    """Setzt ein Hintergrundbild für das Hauptfenster."""
+    image = Image.open(pfad).resize((root.winfo_screenwidth(), root.winfo_screenheight()))
+    bg_image = ImageTk.PhotoImage(image)
+    bg_label = tk.Label(root, image=bg_image)
+    bg_label.image = bg_image
+    bg_label.place(x=0, y=0, relwidth=1, relheight=1)
+    return bg_label
+
+# Hauptprogramm
+root = tk.Tk()
+root.title("Bundestagswahl 2025")
+root.attributes("-fullscreen", True)
+
+# Überschrift
+tk.Label(root, text="Wählen Sie Ihren Kanzlerkandidaten:", font=("Arial", 16, "bold")).pack(pady=10)
+
+# Hintergrundbild setzen
+setze_hintergrundbild(root, r"bilder\bundestag.jpg")
+
+# Hauptframe für Kandidaten
+main_frame = tk.Frame(root)
+main_frame.pack(expand=True, padx=20, pady=20)
+
+# Kandidaten anzeigen
+reihenfolge = list(kandidaten.keys())
+for partei in reihenfolge:
+    erzeuge_kandidaten_frame(main_frame, partei, kandidaten[partei])
 
 # Beenden-Button
-beenden_button = tk.Button(root, text="Beenden", font=("Arial", 14), command=root.destroy)
-beenden_button.pack(side="bottom", pady=10)
+tk.Button(root, text="Beenden", font=("Arial", 14), command=root.destroy).pack(side="bottom", pady=10)
 
 # Hauptschleife starten
 root.mainloop()
