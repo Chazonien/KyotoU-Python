@@ -1,10 +1,8 @@
 import tkinter as tk
-from tkinter import messagebox
 from PIL import Image, ImageTk
 import sys
 import random
-import subprocess
-from main_gui import kandidaten
+from startseite import kandidaten
 
 # Argument: Ausgewählte party
 if len(sys.argv) < 2:
