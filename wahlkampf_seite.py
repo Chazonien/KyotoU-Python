@@ -1,7 +1,9 @@
 import tkinter as tk
 from tkinter import messagebox
 import random
+import time
 from startseite import kandidaten  # Import candidates data
+from events import event_library
 
 class WahlkampfSeite(tk.Frame):
     def __init__(self, parent, controller):
@@ -166,6 +168,32 @@ class WahlkampfSeite(tk.Frame):
         self.normalize_polls()
         self.show_results_popup(party, action, own_change, voter_shift_summary)
         self.update_polls()
+        if random.uniform(0, 1) > 0.5:
+            # Select a random event
+            event_selection = ["A"]  # Extend this list with more events
+            identity = random.choice(event_selection)
+            
+            # Fetch event details
+            img, head, text, opt1, opt2, opt3, w1, w2, w3 = event_library(identity)
+            
+            # Present the event to the player
+            self.show_event_popup(img, head, text, opt1, opt2, opt3)
+            
+            # Wait for player input (1, 2, or 3)
+            player_choice = self.get_player_choice()
+            
+            # Determine the weight for the selected option
+            own_weight_event = [w1, w2, w3][player_choice - 1]
+            
+            # Simulate voter shift and update polls
+            voter_shift_summary_event, own_change_event = self.simulate_voter_shift(party, own_weight_event)
+            self.polls[party] += own_change_event
+            self.normalize_polls()
+            
+            # Show the results of the event
+            self.show_results_popup(party, voter_shift_summary_event, own_change_event)
+            self.update_polls()
+
 
     def show_results_popup(self, player_party, player_action, player_change, voter_shift_summary):
         """Displays a popup showing the results of the round."""
@@ -182,6 +210,27 @@ class WahlkampfSeite(tk.Frame):
         text_box.config(state="disabled")
         text_box.pack(padx=10, pady=10, fill="both", expand=True)
         tk.Button(results_window, text="Schließen", command=results_window.destroy).pack(pady=10)
+
+    def show_event_popup(self, img, head, text, opt1, opt2, opt3):
+        # Example UI code for displaying the event
+        selected_party = self.controller.ausgewaehlte_partei
+
+        popup = tk.Toplevel(self)
+        popup.title(f"Event für {selected_party}")
+        popup.geometry("600x400")
+        popup.add_image(img)
+        popup.set_title(head)
+        popup.set_text(text)
+        popup.add_button(opt1, callback=lambda: self.set_player_choice(1))
+        popup.add_button(opt2, callback=lambda: self.set_player_choice(2))
+        popup.add_button(opt3, callback=lambda: self.set_player_choice(3))
+        popup.show()
+
+    def get_player_choice(self):
+        while not hasattr(self, "player_choice"):
+            time.sleep(0.1)  # Wait for player to make a choice
+        return self.player_choice
+
 
     def zeige_aktionen(self):
         """Displays the available actions for the selected party."""
