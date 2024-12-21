@@ -216,3 +216,50 @@ tk.Button(root, text="Beenden", font=("Arial", 14), command=root.destroy).pack(p
 
 # Hauptschleife starten
 root.mainloop()
+
+
+
+
+def show_results_popup(self, player_party, player_action, player_change, voter_shift_summary):
+        """Displays a popup showing the results of the round."""
+        results_window = tk.Toplevel(self)
+        results_window.title("Rundenergebnisse")
+        results_text = f"Ihre Aktion für {player_party}: {player_action}\nÄnderung: {player_change:+.1f}%\n\n"
+        results_text += "Andere Parteien:\n"
+        for party, change in voter_shift_summary.items():
+            results_text += f"{party}: Änderung: {change:+.1f}%\n"
+
+        tk.Label(results_window, text="Rundenergebnisse", font=("Arial", 14, "bold")).pack(pady=10)
+        text_box = tk.Text(results_window, font=("Arial", 12), wrap="word")
+        text_box.insert("1.0", results_text)
+        text_box.config(state="disabled")
+        text_box.pack(padx=10, pady=10, fill="both", expand=True)
+        tk.Button(results_window, text="Schließen", command=results_window.destroy).pack(pady=10)
+
+    def zeige_aktionen(self):
+        """Displays the available actions for the selected party."""
+        selected_party = self.controller.ausgewaehlte_partei
+
+        aktionen_fenster = tk.Toplevel(self)
+        aktionen_fenster.title(f"Aktionen für {selected_party}")
+        aktionen_fenster.geometry("600x400")  # Adjusted for better usability
+
+        tk.Label(aktionen_fenster, text=f"Wählen Sie eine Aktion für {selected_party}:", font=("Arial", 14)).pack(pady=10)
+
+        # Display standard actions
+        for action in self.actions:
+            tk.Button(
+                aktionen_fenster,
+                text=action,
+                command=lambda a=action: [self.perform_action(selected_party, a), aktionen_fenster.destroy()]
+            ).pack(pady=5)
+
+        # Display special action if available
+        if not self.special_action_used[selected_party]:
+            special_action = self.special_actions.get(selected_party, None)
+            if special_action:
+                tk.Button(
+                    aktionen_fenster,
+                    text=f"Spezialaktion: {special_action}",
+                    command=lambda: [self.perform_action(selected_party, special_action), aktionen_fenster.destroy()]
+                ).pack(pady=10)

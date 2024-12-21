@@ -162,3 +162,8 @@ wahlkampf_button = tk.Button(root, text="Wahlkampf starten", font=("Arial", 14),
 
 # Hauptschleife starten
 root.mainloop()
+
+
+
+
+
