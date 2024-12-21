@@ -1,9 +1,11 @@
 import tkinter as tk
 from tkinter import messagebox
 import random
+import time
 from startseite import kandidaten  # Import candidates data
 import os
 from PIL import Image, ImageTk
+from events import event_library
 
 class WahlkampfSeite(tk.Frame):
     def __init__(self, parent, controller):
