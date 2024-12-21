@@ -38,8 +38,8 @@ class WahlkampfSeite(tk.Frame):
         self.label_ambition.pack(pady=5)
 
         # Umfragen-Anzeige
-        self.label_polls = tk.Label(self, text="", font=("Arial", 14), justify="left", bg="white")
-        self.label_polls.pack(pady=10)
+        self.label_polls = tk.Text(self, font=("Arial", 14), bg="white", wrap="word", state="disabled", height=11, width=35)
+        self.label_polls.pack(pady=10, padx=10, anchor="n")
 
         # Aktionen-Container
         self.actions_frame = tk.Frame(self, bg="white")
@@ -116,8 +116,22 @@ class WahlkampfSeite(tk.Frame):
 
     def update_polls(self):
         """Aktualisiert und zeigt die Umfragewerte."""
-        ergebnisse = "\n".join([f"{party}: {self.polls[party]:.1f}%" for party in self.polls])
-        self.label_polls.config(text=f"Aktuelle Umfragewerte:\n{ergebnisse}")
+        # Aktivieren des Textwidgets für Änderungen
+        self.label_polls.config(state="normal")
+        self.label_polls.delete("1.0", tk.END)  # Lösche alten Text
+
+        # Tag für zentrierten Text definieren
+        self.label_polls.tag_configure("center", justify="center")
+
+        # Schreibe die aktuellen Umfragewerte
+        ergebnisse = "Aktuelle Umfragewerte:\n"
+        for party, value in self.polls.items():
+            ergebnisse += f"{party}: {value:.1f}%\n"
+    
+        self.label_polls.insert(tk.END, ergebnisse, "center")
+
+        # Deaktiviere das Textwidget
+        self.label_polls.config(state="disabled")
 
     def erzeuge_action_buttons(self, partei):
         """Erstellt Buttons für alle verfügbaren Aktionen und die Spezialaktion."""
@@ -229,18 +243,45 @@ class WahlkampfSeite(tk.Frame):
                 w3 * kandidat.get("ambition", 0)) / 100
 
     def normalize_polls(self):
-        """Normalizes the poll percentages to ensure they add up to 100%."""
+        """Normalisiert die Poll-Werte und stellt sicher, dass keine negativen Werte vorhanden sind."""
+        # Setze negative Werte auf 0
+        for party in self.polls:
+            if self.polls[party] < 0:
+                self.polls[party] = 0
+
+        # Normalisiere die Werte, sodass sie insgesamt 100% ergeben
         total = sum(self.polls.values())
         for party in self.polls:
             self.polls[party] = round(self.polls[party] / total * 100, 1)
 
-    def update_poll_changes(self, player_party, player_action, player_change, voter_shift_summary):
+    def update_poll_changes(self, player_party, player_action, own_change, voter_shift_summary):
         """Aktualisiert label_polls mit den aktuellen Werten und Veränderungen."""
-        # Erstelle den Text für die aktuellen Polls und die Veränderungen
-        results_text = "Aktuelle Umfragewerte mit Änderungen:\n"
-        for party, value in self.polls.items():
-            change = voter_shift_summary.get(party, 0)  # Veränderung abrufen, 0 falls keine
-            results_text += f"{party}: {value:.1f}% ({'+' if change >= 0 else ''}{change:.1f}%)\n"
+        # Aktivieren des Textwidgets für Änderungen
+        self.label_polls.config(state="normal")
+        self.label_polls.delete("1.0", tk.END)  # Lösche alten Text
 
-        # Schreibe die aktualisierten Poll-Werte und Veränderungen in label_polls
-        self.label_polls.config(text=results_text)
+        # Tags definieren
+        self.label_polls.tag_configure("center", justify="center")
+        self.label_polls.tag_configure("bold", font=("Arial", 14, "bold"))
+        self.label_polls.tag_configure("gain", foreground="green")
+        self.label_polls.tag_configure("loss", foreground="red")
+
+        # Header hinzufügen
+        header = f"Ihre Aktion: {player_action}\n\nAktuelle Umfragewerte mit Änderungen:\n"
+        self.label_polls.insert(tk.END, header, "center")
+
+        # Umfragewerte und Änderungen hinzufügen
+        for party, value in self.polls.items():
+            if party == player_party:
+                # Eigene Partei fett markieren
+                change = own_change
+                entry = f"{party}: {value:.1f}% ({'+' if change >= 0 else ''}{change:.1f}%)\n"
+                self.label_polls.insert(tk.END, entry, ("bold", "center", "gain" if change >= 0 else "loss"))
+            else:
+                # Andere Parteien mit Farbänderung
+                change = voter_shift_summary.get(party, 0)
+                entry = f"{party}: {value:.1f}% ({'+' if change >= 0 else ''}{change:.1f}%)\n"
+                self.label_polls.insert(tk.END, entry, ("center", "gain" if change >= 0 else "loss"))
+
+        # Deaktiviere das Textwidget
+        self.label_polls.config(state="disabled")
