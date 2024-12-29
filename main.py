@@ -1,6 +1,6 @@
 import tkinter as tk
 from startseite import SpielStart, StartSeite
-from wahlkampf_seite import WahlkampfSeite
+from wahlkampf_seite import WahlkampfSeite, ZufallsEventSeite
 
 class WahlkampfApp:
     def __init__(self, root):
@@ -18,7 +18,7 @@ class WahlkampfApp:
 
         # Frames initialisieren
         self.frames = {}
-        for F in (SpielStart, StartSeite, WahlkampfSeite):  # Weitere Seiten hinzufügen
+        for F in (SpielStart, StartSeite, WahlkampfSeite, ZufallsEventSeite):  # Weitere Seiten hinzufügen
             page_name = F.__name__
             frame = F(parent=self.main_container, controller=self)
             self.frames[page_name] = frame

@@ -198,6 +198,13 @@ class WahlkampfSeite(tk.Frame):
         self.polls[party] += own_change
         self.normalize_polls()
 
+        # Event auslösen
+        if random.uniform(0, 1) < 0.5:
+            # Wechsle zur ZufallsEventSeite und zeige das Event an
+            self.controller.show_frame("ZufallsEventSeite")
+            event_seite = self.controller.frames["ZufallsEventSeite"]
+            event_seite.zeige_event()
+
         # Aktualisiere die GUI
         self.update_polls()
 
@@ -287,3 +294,129 @@ class WahlkampfSeite(tk.Frame):
 
         # Deaktiviere das Textwidget
         self.label_polls.config(state="disabled")
+
+class ZufallsEventSeite(tk.Frame):
+    def __init__(self, parent, controller):
+        super().__init__(parent, bg="white")
+        self.controller = controller
+
+        # Initialisiere Events
+        self.events = self.init_events()
+
+        # Event-Widgets
+        self.label_event_title = tk.Label(self, text="", font=("Arial", 18, "bold"), bg="white")
+        self.label_event_title.pack(pady=10)
+
+        self.label_event_description = tk.Label(self, text="", font=("Arial", 14), bg="white", wraplength=600, justify="center")
+        self.label_event_description.pack(pady=10)
+
+        self.event_image_label = tk.Label(self, bg="white")
+        self.event_image_label.pack(pady=10)
+
+        # Auswahlmöglichkeiten
+        self.options_frame = tk.Frame(self, bg="white")
+        self.options_frame.pack(pady=20)
+
+    def init_events(self):
+        """Initialisiert die Liste der zufälligen Events."""
+        return [
+            {
+                "title": "Umweltdebatte entbrannt!",
+                "description": "Ein Streit um Umweltpolitik hat die Wähler polarisiert. Wie reagieren Sie?",
+                "image": "bilder/umweltdebatte.jpg",
+                "options": [
+                    {"text": "Unterstützen Sie die Umweltbewegung", "weight": 0.5},
+                    {"text": "Betonen Sie wirtschaftliche Interessen", "weight": -0.3},
+                    {"text": "Bleiben Sie neutral", "weight": 0.1},
+                ]
+            },
+            {
+                "title": "Skandal erschüttert die politische Szene!",
+                "description": "Ein großer Skandal hat die Schlagzeilen erobert. Wie gehen Sie vor?",
+                "image": "bilder/skandal.jpg",
+                "options": [
+                    {"text": "Verurteilen Sie den Skandal", "weight": 0.7},
+                    {"text": "Nutzen Sie ihn für politische Angriffe", "weight": 0.4},
+                    {"text": "Ignorieren Sie das Thema", "weight": -0.2},
+                ]
+            },
+            # Weitere Events können hier hinzugefügt werden
+        ]
+
+    def zeige_event(self):
+        """Zeigt ein zufälliges Event an."""
+        event = random.choice(self.events)
+
+        # Setze Titel und Beschreibung
+        self.label_event_title.config(text=event["title"])
+        self.label_event_description.config(text=event["description"])
+
+        # Lade und zeige das Bild
+        image_path = event["image"]
+        if os.path.exists(image_path):
+            image = Image.open(image_path).resize((300, 200), Image.Resampling.LANCZOS)
+            self.event_image = ImageTk.PhotoImage(image)
+            self.event_image_label.config(image=self.event_image)
+        else:
+            print(f"Fehler: Bildpfad nicht gefunden: {image_path}")
+
+        # Erstelle Auswahlmöglichkeiten
+        for widget in self.options_frame.winfo_children():
+            widget.destroy()
+
+        for option in event["options"]:
+            tk.Button(
+                self.options_frame,
+                text=option["text"],
+                font=("Arial", 12),
+                command=lambda o=option: self.handle_event_choice(o)
+            ).pack(pady=5)
+
+    def handle_event_choice(self, option):
+        """Behandelt die Wahl eines Event-Options und aktualisiert die Wählerumfragen."""
+        # Gewicht aus der gewählten Option extrahieren
+        action_weight = option["weight"]
+
+        # Simuliere die Wählerwanderung basierend auf dem Gewicht
+        voter_shift_summary, own_change = self.simulate_voter_shift(action_weight)
+
+        # Aktualisiere die Polls in der Wahlkampf-Seite
+        wahlkampf_seite = self.controller.frames["WahlkampfSeite"]
+        wahlkampf_seite.polls[wahlkampf_seite.controller.ausgewaehlte_partei] += own_change
+        wahlkampf_seite.normalize_polls()
+
+        # Aktualisiere die GUI der Wahlkampf-Seite
+        wahlkampf_seite.update_polls()
+
+        # Wechsel zurück zur Wahlkampf-Seite
+        self.controller.show_frame("WahlkampfSeite")
+
+    def simulate_voter_shift(self, action_weight):
+        """Simuliert die Veränderung der Wählerstimmen basierend auf dem Gewicht der Aktion."""
+        total_shift = random.uniform(0.5, 5)
+        party_weights = {party: random.uniform(-1, 1) for party in self.controller.frames["WahlkampfSeite"].polls}
+
+        positive_sum = sum(w for w in party_weights.values() if w > 0) + max(0, action_weight)
+        negative_sum = sum(w for w in party_weights.values() if w < 0) + min(0, action_weight)
+
+        party_changes = {}
+        for party, weight in party_weights.items():
+            if weight > 0:
+                party_changes[party] = (weight / positive_sum) * total_shift
+            elif weight < 0:
+                party_changes[party] = -(weight / negative_sum) * total_shift
+            else:
+                party_changes[party] = 0
+
+        own_change = (action_weight / positive_sum) * total_shift if action_weight > 0 else 0
+
+        return party_changes, own_change
+
+
+    def normalize_polls(self):
+        """Normalisiert die Poll-Werte."""
+        total = sum(self.controller.polls.values())
+        for party in self.controller.polls:
+            self.controller.polls[party] = round(self.controller.polls[party] / total * 100, 1)
+
+        print("Normalisierte Polls:", self.controller.polls)
