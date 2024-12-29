@@ -324,7 +324,7 @@ class ZufallsEventSeite(tk.Frame):
                 "description": "Umweltbewegungen wie Fridays For Future verstärken aufeinmal die Proteste kurz vor der Wahl. Wie reagieren Sie?",
                 "image": "bilder/umwelt-debatte.png",
                 "options": [
-                    {"text": "Konstruktive Auseinandrsetzung mit den Demonstranten", "weight": random.uniform(0.5, 1.5)},
+                    {"text": "Konstruktive Auseinandersetzung mit den Demonstranten", "weight": random.uniform(0.5, 1.5)},
                     {"text": "Die scheiß Drecksgören sollen zurück in die Schule", "weight": random.uniform(-1, 0)},
                     {"text": "Sie äußern sich überhaupt gar nicht", "weight": random.uniform(-0.5, 0.5)},
                 ]
@@ -341,10 +341,10 @@ class ZufallsEventSeite(tk.Frame):
             },
             {
                 "title": "Flutkatastrophe im nächsten Tal!",
-                "description": "Es regnet mal wieder wie in Großbritannien und halb Thüringen ist abgesoffen. Bei einer Veranstaltung ,bei der es um strukturelle Hilfe geht, lachst du ausversehen laut. waas machst du?",
+                "description": "Es regnet mal wieder wie in Großbritannien und halb Thüringen ist abgesoffen. Bei einer Veranstaltung, bei der es um strukturelle Hilfe geht, lachst du ausversehen laut. was machst du?",
                 "image": "bilder/laschet-lacht.png",
                 "options": [
-                    {"text": "Direkt nach Veröffentlichung der Bilder entschuldigen (sowie jeder folgender Wahlkampfeveranstaltung)", "weight": random.uniform(-1.5, -0.5)},
+                    {"text": "Direkt nach Veröffentlichung der Bilder entschuldigen (sowie jeder folgender Wahlkampfeveranstaltung)", "weight": random.uniform(-1.5, 0)},
                     {"text": "Du gehst vor die Presse und erzählst den Witz", "weight": random.uniform(-2, -1)},
                     {"text": "Ignorierst die Bilder und machst einfach weiter Wahlkampf", "weight": random.uniform(-0.5, 0)}
                 ]
