@@ -5,7 +5,6 @@ import time
 from startseite import kandidaten  # Import candidates data
 import os
 from PIL import Image, ImageTk
-from events import event_library
 
 class WahlkampfSeite(tk.Frame):
     def __init__(self, parent, controller):
@@ -322,30 +321,41 @@ class ZufallsEventSeite(tk.Frame):
         return [
             {
                 "title": "Umweltdebatte entbrannt!",
-                "description": "Ein Streit um Umweltpolitik hat die Wähler polarisiert. Wie reagieren Sie?",
-                "image": "bilder/umweltdebatte.jpg",
+                "description": "Umweltbewegungen wie Fridays For Future verstärken aufeinmal die Proteste kurz vor der Wahl. Wie reagieren Sie?",
+                "image": "bilder/umwelt-debatte.png",
                 "options": [
-                    {"text": "Unterstützen Sie die Umweltbewegung", "weight": 0.5},
-                    {"text": "Betonen Sie wirtschaftliche Interessen", "weight": -0.3},
-                    {"text": "Bleiben Sie neutral", "weight": 0.1},
+                    {"text": "Konstruktive Auseinandrsetzung mit den Demonstranten", "weight": random.uniform(0.5, 1.5)},
+                    {"text": "Die scheiß Drecksgören sollen zurück in die Schule", "weight": random.uniform(-1, 0)},
+                    {"text": "Sie äußern sich überhaupt gar nicht", "weight": random.uniform(-0.5, 0.5)},
                 ]
             },
             {
-                "title": "Skandal erschüttert die politische Szene!",
-                "description": "Ein großer Skandal hat die Schlagzeilen erobert. Wie gehen Sie vor?",
-                "image": "bilder/skandal.jpg",
+                "title": "Maut-Debakel 2.0!",
+                "description": "Nach einem vorgeschlagenen Plan zur Einführung einer Fahrrad-Maut, hagelt es Proteste von Radfahrverbänden. Wie gehen Sie mit der Situation um?",
+                "image": "bilder/maut-debakel.png",
                 "options": [
-                    {"text": "Verurteilen Sie den Skandal", "weight": 0.7},
-                    {"text": "Nutzen Sie ihn für politische Angriffe", "weight": 0.4},
-                    {"text": "Ignorieren Sie das Thema", "weight": -0.2},
+                    {"text": "Den Plan sofort zurückziehen und PR Bilder mit einem Fahrrad (wie fährt man das eigentlich ohne Fahrer?)", "weight": random.uniform(0.5, 1.5)},
+                    {"text": "Beharren Sie auf die Maut: 'Radwege sind Luxus! Autos haben ein Recht zum Rasen!'", "weight": random.uniform(-1.5, -0.5)},
+                    {"text": "Die Schuld für die Veröffentlichung des Plans dem Generalsekretär geben.", "weight": random.uniform(-0.5, 0.5)}
                 ]
             },
+            {
+                "title": "Flutkatastrophe im nächsten Tal!",
+                "description": "Es regnet mal wieder wie in Großbritannien und halb Thüringen ist abgesoffen. Bei einer Veranstaltung ,bei der es um strukturelle Hilfe geht, lachst du ausversehen laut. waas machst du?",
+                "image": "bilder/laschet-lacht.png",
+                "options": [
+                    {"text": "Direkt nach Veröffentlichung der Bilder entschuldigen (sowie jeder folgender Wahlkampfeveranstaltung)", "weight": random.uniform(-1.5, -0.5)},
+                    {"text": "Du gehst vor die Presse und erzählst den Witz", "weight": random.uniform(-2, -1)},
+                    {"text": "Ignorierst die Bilder und machst einfach weiter Wahlkampf", "weight": random.uniform(-0.5, 0)}
+                ]
+            }
             # Weitere Events können hier hinzugefügt werden
         ]
 
     def zeige_event(self):
         """Zeigt ein zufälliges Event an."""
         event = random.choice(self.events)
+        self.events.remove(event)
 
         # Setze Titel und Beschreibung
         self.label_event_title.config(text=event["title"])
@@ -354,7 +364,7 @@ class ZufallsEventSeite(tk.Frame):
         # Lade und zeige das Bild
         image_path = event["image"]
         if os.path.exists(image_path):
-            image = Image.open(image_path).resize((300, 200), Image.Resampling.LANCZOS)
+            image = Image.open(image_path).resize((600, 400), Image.Resampling.LANCZOS)
             self.event_image = ImageTk.PhotoImage(image)
             self.event_image_label.config(image=self.event_image)
         else:
