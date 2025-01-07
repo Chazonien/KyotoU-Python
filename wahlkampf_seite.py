@@ -5,7 +5,6 @@ import time
 from startseite import kandidaten  # Import candidates data
 import os
 from PIL import Image, ImageTk
-from events import event_library
 
 class WahlkampfSeite(tk.Frame):
     def __init__(self, parent, controller):
@@ -14,6 +13,20 @@ class WahlkampfSeite(tk.Frame):
 
         # Hintergrundbild
         self.setze_hintergrundbild(r"bilder/bundestag_innen.jpg")
+
+        # Rundenzähler
+        self.turns = 0
+        self.max_turns = 15
+
+        # Counter oben rechts
+        self.weeks_label = tk.Label(
+            self,
+            text=f"{self.max_turns - self.turns} Wochen bis zur Wahl",
+            font=("Arial", 14, "bold"),
+            bg="white",
+            anchor="e"
+        )
+        self.weeks_label.place(relx=0.98, rely=0.98, anchor="se") # Position unten rechts
 
         # Poll-Daten initialisieren
         self.polls = self.init_polls()
@@ -199,6 +212,24 @@ class WahlkampfSeite(tk.Frame):
         self.polls[party] += own_change
         self.normalize_polls()
 
+        # Event auslösen
+        if random.uniform(0, 1) < 0.3:
+            # Wechsle zur ZufallsEventSeite und zeige das Event an
+            self.controller.show_frame("ZufallsEventSeite")
+            event_seite = self.controller.frames["ZufallsEventSeite"]
+            event_seite.zeige_event()
+
+        # Rundenzähler aktualisieren
+        self.turns += 1
+        self.weeks_label.config(text=f"{self.max_turns - self.turns} Wochen bis zur Wahl")
+
+        # Prüfe, ob die maximale Rundenzahl erreicht ist
+        if self.turns >= self.max_turns:
+            self.controller.show_frame("SpielendeSeite")
+            spielende_seite = self.controller.frames["SpielendeSeite"]
+            spielende_seite.zeige_polls(self.polls)
+            return
+
         # Aktualisiere die GUI
         self.update_polls()
 
@@ -288,3 +319,236 @@ class WahlkampfSeite(tk.Frame):
 
         # Deaktiviere das Textwidget
         self.label_polls.config(state="disabled")
+
+class ZufallsEventSeite(tk.Frame):
+    def __init__(self, parent, controller):
+        super().__init__(parent, bg="white")
+        self.controller = controller
+
+        # Initialisiere Events
+        self.events = self.init_events()
+
+        # Event-Widgets
+        self.label_event_title = tk.Label(self, text="", font=("Arial", 18, "bold"), bg="white")
+        self.label_event_title.pack(pady=10)
+
+        self.label_event_description = tk.Label(self, text="", font=("Arial", 14), bg="white", wraplength=600, justify="center")
+        self.label_event_description.pack(pady=10)
+
+        self.event_image_label = tk.Label(self, bg="white")
+        self.event_image_label.pack(pady=10)
+
+        # Auswahlmöglichkeiten
+        self.options_frame = tk.Frame(self, bg="white")
+        self.options_frame.pack(pady=20)
+
+    def init_events(self):
+        """Initialisiert die Liste der zufälligen Events."""
+        return [
+            {
+                "title": "Umweltdebatte entbrannt!",
+                "description": "Umweltbewegungen wie Fridays For Future verstärken aufeinmal die Proteste kurz vor der Wahl. Wie reagieren Sie?",
+                "image": "bilder/umwelt-debatte.png",
+                "options": [
+                    {"text": "Konstruktive Auseinandersetzung mit den Demonstranten", "weight": random.uniform(0.5, 1.5)},
+                    {"text": "Die scheiß Drecksgören sollen zurück in die Schule", "weight": random.uniform(-1, 0)},
+                    {"text": "Sie äußern sich überhaupt gar nicht", "weight": random.uniform(-0.5, 0.5)},
+                ]
+            },
+            {
+                "title": "Maut-Debakel 2.0!",
+                "description": "Nach einem vorgeschlagenen Plan zur Einführung einer Fahrrad-Maut, hagelt es Proteste von Radfahrverbänden. Wie gehen Sie mit der Situation um?",
+                "image": "bilder/maut-debakel.png",
+                "options": [
+                    {"text": "Den Plan sofort zurückziehen und PR Bilder mit einem Fahrrad (wie fährt man das eigentlich ohne Fahrer?)", "weight": random.uniform(0.5, 1.5)},
+                    {"text": "Beharren Sie auf die Maut: 'Radwege sind Luxus! Autos haben ein Recht zum Rasen!'", "weight": random.uniform(-1.5, -0.5)},
+                    {"text": "Die Schuld für die Veröffentlichung des Plans dem Generalsekretär geben.", "weight": random.uniform(-0.5, 0.5)}
+                ]
+            },
+            {
+                "title": "Flutkatastrophe im nächsten Tal!",
+                "description": "Es regnet mal wieder wie in Großbritannien und halb Thüringen ist abgesoffen. Bei einer Veranstaltung, bei der es um strukturelle Hilfe geht, lachst du ausversehen laut. was machst du?",
+                "image": "bilder/laschet-lacht.png",
+                "options": [
+                    {"text": "Direkt nach Veröffentlichung der Bilder entschuldigen (sowie jeder folgender Wahlkampfeveranstaltung)", "weight": random.uniform(-1.5, 0)},
+                    {"text": "Du gehst vor die Presse und erzählst den Witz", "weight": random.uniform(-2, -1)},
+                    {"text": "Ignorierst die Bilder und machst einfach weiter Wahlkampf", "weight": random.uniform(-0.5, 0)}
+                ]
+            },
+            {
+                "title": "Elon Musk wird Kolumnist der WELT!",
+                "description": "Elon Musk schreibt eine Kolumne mit dem Titel 'Deutschland braucht mehr Hustle'. Sie wird sofort kontrovers diskutiert. Wie reagieren Sie?",
+                "image": "bilder/musk-kolumne.png",
+                "options": [
+                    {"text": "Loben Sie die Kolumne als 'frischen Wind' für die deutsche Medienlandschaft", "weight": random.uniform(-0.5, 0.5)},
+                    {"text": "Verurteilen Sie die Kolumne als 'kapitalistischen Unsinn'", "weight": random.uniform(-1, 1)},
+                    {"text": "Erklären Sie, dass Elon Musk deutsche Politik nicht versteht", "weight": random.uniform(0, 0.5)}
+                ]
+            },
+            {
+                "title": "BER plant den 'Terminal für die Zukunft'!",
+                "description": "Ein neuer Terminal am BER wird angekündigt: Diesmal speziell für Hyperloop-Passagiere. Die Kosten sind unklat. Wie reagieren Sie?",
+                "image": "bilder/ber-terminal.png",
+                "options": [
+                    {"text": "Feiern Sie das Projekt als Innovation 'Made in Germany'", "weight": random.uniform(-0.25, 0.25)},
+                    {"text": "Kritisieren Sie den Plan und fordern stattdessen funktionierende Rolltreppen", "weight": random.uniform(1, 1.5)},
+                    {"text": "Fordern Sie erstmal eine Bürgerbefragung über den Terminal, und reichen die erste Baubeschwerde ein", "weight": random.uniform(-1, 0)}
+                ]
+            },
+            {
+                "title": "Musk gegen Gewerkschaften!",
+                "description": "Elon Musk fordert ein Verbot von Gewerkschaften in Deutschland, da sie 'Innovation behindern'. Was sagen Sie dazu?",
+                "image": "bilder/musk-gewerkschaften.png",
+                "options": [
+                    {"text": "Verteidigen Sie Gewerkschaften als 'Grundpfeiler der Demokratie'", "weight": random.uniform(0.5, 1.5)},
+                    {"text": "Unterstützen Sie Musk und erklären, dass Gewerkschaften 'veraltet' sind", "weight": random.uniform(-1.5, -0.5)},
+                    {"text": "Weichen Sie aus: 'Das Thema verdient weitere Diskussion'", "weight": random.uniform(-0.5, 0.5)}
+                ]
+            },
+            {
+                "title": "Trump twittert: 'Germany owes me Bratwurst!'",
+                "description": "Donald Trump behauptet auf Twitter, Deutschland habe ihm 'eine Bratwurst und mehr Respekt' versprochen. Was tun Sie?",
+                "image": "bilder/trump-twitter.png",
+                "options": [
+                    {"text": "Sie vermitteln einen Würstchenstandbesuch mit Markus Söder", "weight": random.uniform(0.5, 1.5)},
+                    {"text": "Ignorieren Sie den Tweet und hoffen, dass es niemand ernst nimmt", "weight": random.uniform(-0.5, 0.5)},
+                    {"text": "Geben Sie Trump die Bratwurst und laden ihn nach Thüringen ein. Dank des bestehenden Funklochs, erlösen Sie die Welt für ein paar Stunden von seinem getwitter", "weight": random.uniform(1.5, 2)}
+                ]
+            },
+            {
+                "title": "EU führt Kartoffel-Norm 3000 ein!",
+                "description": "Die EU beschließt eine neue Richtlinie: Kartoffeln dürfen maximal 8 cm lang und 4 cm dick sein. Bauern protestieren. Was tun Sie?",
+                "image": "bilder/eu-kartoffeln.png",
+                "options": [
+                    {"text": "Unterstützen Sie die Bauern: 'Wir lassen uns die Folienkartoffel nicht verbieten!'", "weight": random.uniform(0.5, 1.5)},
+                    {"text": "Verteidigen Sie die EU und erklären die Regelung als 'wissenschaftlich fundiert'", "weight": random.uniform(-1.5, -0.5)},
+                    {"text": "Versprechen Sie Kartoffellieferungen an die Ukraine für Munition von Kartoffelkanonen", "weight": random.uniform(-0.5, 0.5)}
+                ]
+            }
+            # Weitere Events können hier hinzugefügt werden
+        ]
+
+    def zeige_event(self):
+        """Zeigt ein zufälliges Event an."""
+        event = random.choice(self.events)
+        self.events.remove(event)
+
+        # Setze Titel und Beschreibung
+        self.label_event_title.config(text=event["title"])
+        self.label_event_description.config(text=event["description"])
+
+        # Lade und zeige das Bild
+        image_path = event["image"]
+        if os.path.exists(image_path):
+            image = Image.open(image_path).resize((600, 400), Image.Resampling.LANCZOS)
+            self.event_image = ImageTk.PhotoImage(image)
+            self.event_image_label.config(image=self.event_image)
+        else:
+            print(f"Fehler: Bildpfad nicht gefunden: {image_path}")
+
+        # Erstelle Auswahlmöglichkeiten
+        for widget in self.options_frame.winfo_children():
+            widget.destroy()
+
+        for option in event["options"]:
+            tk.Button(
+                self.options_frame,
+                text=option["text"],
+                font=("Arial", 12),
+                command=lambda o=option: self.handle_event_choice(o)
+            ).pack(pady=5)
+
+    def handle_event_choice(self, option):
+        """Behandelt die Wahl eines Event-Options und aktualisiert die Wählerumfragen."""
+        # Gewicht aus der gewählten Option extrahieren
+        action_weight = option["weight"]
+
+        # Simuliere die Wählerwanderung basierend auf dem Gewicht
+        voter_shift_summary, own_change = self.simulate_voter_shift(action_weight)
+
+        # Aktualisiere die Polls in der Wahlkampf-Seite
+        wahlkampf_seite = self.controller.frames["WahlkampfSeite"]
+        wahlkampf_seite.polls[wahlkampf_seite.controller.ausgewaehlte_partei] += own_change
+        wahlkampf_seite.normalize_polls()
+
+        # Aktualisiere die GUI der Wahlkampf-Seite
+        wahlkampf_seite.update_polls()
+
+        # Wechsel zurück zur Wahlkampf-Seite
+        self.controller.show_frame("WahlkampfSeite")
+
+    def simulate_voter_shift(self, action_weight):
+        """Simuliert die Veränderung der Wählerstimmen basierend auf dem Gewicht der Aktion."""
+        total_shift = random.uniform(0.5, 5)
+        party_weights = {party: random.uniform(-1, 1) for party in self.controller.frames["WahlkampfSeite"].polls}
+
+        positive_sum = sum(w for w in party_weights.values() if w > 0) + max(0, action_weight)
+        negative_sum = sum(w for w in party_weights.values() if w < 0) + min(0, action_weight)
+
+        party_changes = {}
+        for party, weight in party_weights.items():
+            if weight > 0:
+                party_changes[party] = (weight / positive_sum) * total_shift
+            elif weight < 0:
+                party_changes[party] = -(weight / negative_sum) * total_shift
+            else:
+                party_changes[party] = 0
+
+        own_change = (action_weight / positive_sum) * total_shift if action_weight > 0 else 0
+
+        return party_changes, own_change
+
+
+    def normalize_polls(self):
+        """Normalisiert die Poll-Werte."""
+        total = sum(self.controller.polls.values())
+        for party in self.controller.polls:
+            self.controller.polls[party] = round(self.controller.polls[party] / total * 100, 1)
+
+        print("Normalisierte Polls:", self.controller.polls)
+
+class SpielendeSeite(tk.Frame):
+    def __init__(self, parent, controller):
+        super().__init__(parent, bg="white")
+        self.controller = controller
+
+        self.label_titel = tk.Label(self, text="Endergebnisse der Wahl", font=("Arial", 18, "bold"), bg="white")
+        self.label_titel.pack(pady=20)
+
+        self.polls_canvas = tk.Canvas(self, width=800, height=600, bg="white")
+        self.polls_canvas.pack(pady=20)
+
+    def zeige_polls(self, polls):
+        """Zeigt die Endumfragen als Halbkreis-Diagramm an."""
+        self.polls_canvas.delete("all")  # Vorherigen Inhalt löschen
+
+        # Parteien mit >= 5% filtern
+        visible_polls = {party: value for party, value in polls.items() if value >= 5}
+        total_votes = sum(visible_polls.values())
+
+        # Berechne Halbkreis-Werte
+        start_angle = 180  # Halbkreis beginnt bei 180° (links)
+        for party, value in visible_polls.items():
+            extent = (value / total_votes) * 180  # Anteil des Halbkreises
+            self.polls_canvas.create_arc(50, 50, 350, 350, start=start_angle, extent=-extent, fill=self.get_color(party))
+            start_angle -= extent
+
+        # Beschriftungen hinzufügen (alle Parteien, auch unter 5%)
+        y_offset = 250
+        for party, value in polls.items():
+            self.polls_canvas.create_text(200, y_offset, text=f"{party}: {value:.1f}%", fill="black", font=("Arial", 12))
+            y_offset += 20
+
+
+    def get_color(self, party):
+        """Gibt Farben für Parteien zurück."""
+        colors = {
+            "CDU/CSU": "black",
+            "SPD": "red",
+            "Grüne": "green",
+            "FDP": "yellow",
+            "AfD": "blue",
+            "Linke": "purple",
+            "BSW": "gray"
+        }
+        return colors.get(party, "gray")
