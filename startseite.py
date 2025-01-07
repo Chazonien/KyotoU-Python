@@ -8,50 +8,50 @@ kandidaten = {
     "SPD": {
         "name": "Olaf Scholz",
         "kompetenz": 75,
-        "beliebtheit": 70,
-        "ambition": 85,
+        "beliebtheit": 65,
+        "ambition": 70,
         "bild": r"bilder\spd.jpg"
     },
     "CDU/CSU": {
         "name": "Friedrich Merz",
-        "kompetenz": 90,
-        "beliebtheit": 85,
-        "ambition": 80,
+        "kompetenz": 80,
+        "beliebtheit": 65,
+        "ambition": 65,
         "bild": r"bilder/cdu.jpg"
     },
     "Grüne": {
         "name": "Robert Habeck",
-        "kompetenz": 85,
-        "beliebtheit": 90,
-        "ambition": 70,
+        "kompetenz": 80,
+        "beliebtheit": 70,
+        "ambition": 60,
         "bild": r"bilder/gruene.jpg"
     },
     "FDP": {
         "name": "Christian Lindner",
-        "kompetenz": 70,
+        "kompetenz": 75,
         "beliebtheit": 60,
-        "ambition": 95,
+        "ambition": 75,
         "bild": r"bilder/fdp.jpg"
     },
     "AfD": {
         "name": "Alice Weidel",
-        "kompetenz": 50,
-        "beliebtheit": 40,
-        "ambition": 95,
+        "kompetenz": 70,
+        "beliebtheit": 60,
+        "ambition": 80,
         "bild": r"bilder/afd.jpg"
     },
     "Linke": {
         "name": "van Aken & Reichinnek",
         "kompetenz": 65,
-        "beliebtheit": 80,
+        "beliebtheit": 55,
         "ambition": 90,
         "bild": r"bilder/linke.jpg"
     },
     "BSW": {
         "name": "Sarah Wagenknecht",
         "kompetenz": 80,
-        "beliebtheit": 75,
-        "ambition": 85,
+        "beliebtheit": 65,
+        "ambition": 75,
         "bild": r"bilder/bsw.jpg"
     }
 }

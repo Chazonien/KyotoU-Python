@@ -40,11 +40,11 @@ class WahlkampfSeite(tk.Frame):
         self.label_ambition.pack(pady=5)
 
         # Umfragen-Anzeige
-        self.label_polls = tk.Text(self, font=("Arial", 14), bg="white", wrap="word", state="disabled", height=11, width=35)
+        self.label_polls = tk.Text(self, font=("Arial", 14), bg="white", wrap="word", state="disabled", height=11, width=40)
         self.label_polls.pack(pady=10, padx=10, anchor="n")
 
         # Aktionen-Container
-        self.actions_frame = tk.Frame(self, bg="white")
+        self.actions_frame = tk.Frame(self, bg="white", height=11, width=40)
         self.actions_frame.pack(pady=20)
 
     def setze_hintergrundbild(self, pfad):
@@ -70,7 +70,8 @@ class WahlkampfSeite(tk.Frame):
             "Grüne": 13,
             "BSW": 5.5,
             "FDP": 3.7,
-            "Linke": 3
+            "Linke": 3,
+            "Sonstige": 7.9
         }
     
     def init_actions(self):
@@ -169,19 +170,19 @@ class WahlkampfSeite(tk.Frame):
 
         if action in self.actions:
             if action == "Wahlkampfveranstaltung":
-                character_bonus = self.character_specific_influence(party, 0.3, 0.5, 0.2)
-                own_weight = random.uniform(-1 + character_bonus, character_bonus)
-            elif action == "Werbung in sozialen Medien":
-                character_bonus = self.character_specific_influence(party, 0.1, 0.3, 0.6)
-                own_weight = random.uniform(-1 + character_bonus, character_bonus)
-            elif action == "Debatte":
-                character_bonus = self.character_specific_influence(party, 0.5, 0.2, 0.3)
-                own_weight = random.uniform(-1 + character_bonus, character_bonus)
-            elif action == "Flyer und Werbegeschenke":
                 character_bonus = self.character_specific_influence(party, 0.3, 0.4, 0.3)
                 own_weight = random.uniform(-1 + character_bonus, character_bonus)
+            elif action == "Werbung in sozialen Medien":
+                character_bonus = self.character_specific_influence(party, 0.1, 0.2, 0.7)
+                own_weight = random.uniform(-1 + character_bonus, character_bonus)
+            elif action == "Debatte":
+                character_bonus = self.character_specific_influence(party, 0.7, 0.1, 0.2)
+                own_weight = random.uniform(-1 + character_bonus, character_bonus)
+            elif action == "Flyer und Werbegeschenke":
+                character_bonus = self.character_specific_influence(party, 0.4, 0.2, 0.4)
+                own_weight = random.uniform(-1 + character_bonus, character_bonus)
             elif action == "Spenden sammeln":
-                character_bonus = self.character_specific_influence(party, 0.1, 0.6, 0.3)
+                character_bonus = self.character_specific_influence(party, 0.1, 0.7, 0.2)
                 own_weight = random.uniform(-1 + character_bonus, character_bonus)
             else:
                 own_weight = random.uniform(-1,1) 
