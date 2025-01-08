@@ -231,7 +231,7 @@ class WahlkampfSeite(tk.Frame):
             spielende_seite.zeige_polls(self.polls)
             return
 
-        polls_after = self.polls
+        polls_after = self.polls.copy()
 
         poll_change_own = polls_after[party] - polls_before[party]
         poll_change_others = {
