@@ -177,6 +177,7 @@ class WahlkampfSeite(tk.Frame):
     
     def perform_action(self, party, action):
         """Führt eine Aktion aus und aktualisiert die Umfragewerte."""
+        # Speichert die Umfrageergebnisse bevor eine Aktion durchgeführt wird
         polls_before = self.polls.copy()
         if party not in self.polls:
             messagebox.showerror("Fehler", "Ungültige Partei!")
@@ -231,8 +232,10 @@ class WahlkampfSeite(tk.Frame):
             spielende_seite.zeige_polls(self.polls)
             return
 
+        # Speichert die Umfrageergebnisse nach den durchgeführten Aktionen
         polls_after = self.polls.copy()
 
+        # Berechnet die Diifferenz der Umfrageergebnisse
         poll_change_own = polls_after[party] - polls_before[party]
         poll_change_others = {
                 party_change: polls_after[party_change] - polls_before[party_change]
@@ -432,6 +435,16 @@ class ZufallsEventSeite(tk.Frame):
                     {"text": "Unterstützen Sie die Bauern: 'Wir lassen uns die Folienkartoffel nicht verbieten!'", "weight": random.uniform(0.5, 1.5)},
                     {"text": "Verteidigen Sie die EU und erklären die Regelung als 'wissenschaftlich fundiert'", "weight": random.uniform(-1.5, -0.5)},
                     {"text": "Versprechen Sie Kartoffellieferungen an die Ukraine für Munition von Kartoffelkanonen", "weight": random.uniform(-0.5, 0.5)}
+                ]
+            },
+            {
+                "title": "Bürgermeister outet sich öffentlich!",
+                "description": "Ein Bürgermeister einer Großstadt macht öffentlich, dass er homosexuell ist. Die Nachricht sorgt für unterschiedliche Reaktionen in der Gesellschaft. Wie positionieren Sie sich?",
+                "image": "bilder/buergermeister-outing.png",
+                "options": [
+                    {"text": "Feiern Sie den Mut und sprechen Sie sich für mehr Offenheit und Toleranz aus.", "weight": random.uniform(0.5, 1.5)},
+                    {"text": "Reagieren Sie neutral und betonen, dass die sexuelle Orientierung Privatsache ist.", "weight": random.uniform(-0.5, 0.5)},
+                    {"text": "Solange der Bürgermeister sich mir nicht nähert ist alles gut und Sie appellieren an traditionelle Werte.", "weight": random.uniform(-1.5, -0.5)}
                 ]
             }
             # Weitere Events können hier hinzugefügt werden
