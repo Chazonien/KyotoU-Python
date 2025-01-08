@@ -177,6 +177,7 @@ class WahlkampfSeite(tk.Frame):
     
     def perform_action(self, party, action):
         """Führt eine Aktion aus und aktualisiert die Umfragewerte."""
+        polls_before = self.polls.copy()
         if party not in self.polls:
             messagebox.showerror("Fehler", "Ungültige Partei!")
             return
@@ -206,12 +207,12 @@ class WahlkampfSeite(tk.Frame):
             own_weight = random.uniform(-1, 1)        
 
         # Simuliere Verschiebung der Wählerstimmen
-        voter_shift_summary, own_change = self.simulate_voter_shift(party, own_weight)
+        own_change = self.simulate_voter_shift(party, own_weight)
         
         # Aktualisiere Polls
         self.polls[party] += own_change
         self.normalize_polls()
-
+        
         # Event auslösen
         if random.uniform(0, 1) < 0.3:
             # Wechsle zur ZufallsEventSeite und zeige das Event an
@@ -230,11 +231,19 @@ class WahlkampfSeite(tk.Frame):
             spielende_seite.zeige_polls(self.polls)
             return
 
+        polls_after = self.polls
+
+        poll_change_own = polls_after[party] - polls_before[party]
+        poll_change_others = {
+                party_change: polls_after[party_change] - polls_before[party_change]
+                for party_change in self.polls if party_change != party
+            }
+
         # Aktualisiere die GUI
         self.update_polls()
 
         # Zeige die Änderungen direkt im Poll-Container
-        self.update_poll_changes(party, action, own_change, voter_shift_summary)
+        self.update_poll_changes(party, action, poll_change_own, poll_change_others)
 
     def simulate_voter_shift(self, current_party, own_weight):
         """Simulates voter shift based on the player's action."""
@@ -267,7 +276,7 @@ class WahlkampfSeite(tk.Frame):
         elif own_weight < 0:
             own_change = (own_weight / negative_sum) * total_shift
 
-        return party_changes, own_change
+        return own_change
 
     def character_specific_influence(self, party, w1, w2, w3):
         """Calculates the specific influence of a candidate."""
@@ -464,7 +473,7 @@ class ZufallsEventSeite(tk.Frame):
         action_weight = option["weight"]
 
         # Simuliere die Wählerwanderung basierend auf dem Gewicht
-        voter_shift_summary, own_change = self.simulate_voter_shift(action_weight)
+        own_change = self.simulate_voter_shift_event(action_weight)
 
         # Aktualisiere die Polls in der Wahlkampf-Seite
         wahlkampf_seite = self.controller.frames["WahlkampfSeite"]
@@ -477,7 +486,7 @@ class ZufallsEventSeite(tk.Frame):
         # Wechsel zurück zur Wahlkampf-Seite
         self.controller.show_frame("WahlkampfSeite")
 
-    def simulate_voter_shift(self, action_weight):
+    def simulate_voter_shift_event(self, action_weight):
         """Simuliert die Veränderung der Wählerstimmen basierend auf dem Gewicht der Aktion."""
         total_shift = random.uniform(0.5, 5)
         party_weights = {party: random.uniform(-1, 1) for party in self.controller.frames["WahlkampfSeite"].polls}
@@ -496,7 +505,7 @@ class ZufallsEventSeite(tk.Frame):
 
         own_change = (action_weight / positive_sum) * total_shift if action_weight > 0 else 0
 
-        return party_changes, own_change
+        return own_change
 
     def normalize_polls(self):
         """Normalisiert die Poll-Werte."""
@@ -522,7 +531,7 @@ class SpielendeSeite(tk.Frame):
         self.polls_canvas.delete("all")  # Vorherigen Inhalt löschen
 
         # Parteien mit >= 5% filtern
-        visible_polls = {party: value for party, value in polls.items() if value >= 5}
+        visible_polls = {party: value for party, value in polls.items() if value >= 5 and party != "Sonstige"}
         total_votes = sum(visible_polls.values())
 
         # Berechne Halbkreis-Werte
