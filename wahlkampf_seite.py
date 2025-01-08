@@ -507,7 +507,6 @@ class ZufallsEventSeite(tk.Frame):
 
         return own_change
 
-
     def normalize_polls(self):
         """Normalisiert die Poll-Werte."""
         total = sum(self.controller.polls.values())
