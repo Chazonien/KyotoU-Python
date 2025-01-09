@@ -440,7 +440,7 @@ class ZufallsEventSeite(tk.Frame):
             {
                 "title": "Bürgermeister outet sich öffentlich!",
                 "description": "Ein Bürgermeister einer Großstadt macht öffentlich, dass er homosexuell ist. Die Nachricht sorgt für unterschiedliche Reaktionen in der Gesellschaft. Wie positionieren Sie sich?",
-                "image": "bilder/buergermeister-outing.png",
+                "image": "bilder/wowereit.png",
                 "options": [
                     {"text": "Feiern Sie den Mut und sprechen Sie sich für mehr Offenheit und Toleranz aus.", "weight": random.uniform(0.5, 1.5)},
                     {"text": "Reagieren Sie neutral und betonen, dass die sexuelle Orientierung Privatsache ist.", "weight": random.uniform(-0.5, 0.5)},
@@ -455,6 +455,26 @@ class ZufallsEventSeite(tk.Frame):
                     {"text": "Unterstützen Sie den Vorschlag und schlagen einen Bier-Soli vor", "weight": random.uniform(-0.5, 0.5)},
                     {"text": "Fordern Sie, dass alle Bundesländer gleich behandelt werden", "weight": random.uniform(1, 1.5)},
                     {"text": "Schlagen Sie vor, dass Bayern sich von Deutschland trennt, wenn sie das ernst meinen", "weight": random.uniform(0.5, 1.5)}
+                ]
+            },
+            {
+                "title": "Jugendwort des Jahres!'",
+                "description": "Susanne Daubner haut wieder das Jugendwort des Jahres raus. Bei einer Wahlkampfveranstaltung wollen Sie mit der Jugend anknüpfen. Was sagen Sie?",
+                "image": "jugendwort.png",
+                "options": [
+                    {"text": "Ich bin ein richtiges Sigma! Wer micht wählt +5000 Aura", "weight": random.uniform(0.5, 1.5)},
+                    {"text": "Cringe wer nicht wählen geht! Richtige Lowperformer!", "weight": random.uniform(0, 1)},
+                    {"text": "Die Talahons am Berliner Bahnhof, ey, verticken echt das beste Gras", "weight": random.uniform(0, 1)}
+                ]
+            },
+            {
+                "title": "Bierzelt Wahlkampf!",
+                "description": "Wie jeder gute Deutsche, trifft man seine Wahlentscheidung im Bierzelt! Beim dritten Bier kommt es dazu: Gras!",
+                "image": "cannabis.png",
+                "options": [
+                    {"text": "Karl Lauterbach auf die Bühne holen und einen Bubatz durchziehen", "weight": random.uniform(0.5, 1.5)},
+                    {"text": "Kiffer raus aus Bayern", "weight": random.uniform(-1, 0)},
+                    {"text": "Ich bin gegen alle Drogen! Bier ist das einzig Wahre von Gott gegeben!", "weight": random.uniform(0, 1)}
                 ]
             }
             # Weitere Events können hier hinzugefügt werden
@@ -551,32 +571,32 @@ class SpielendeSeite(tk.Frame):
 
         self.collaboration_matrix = {}
 
-        self.set_collaboration_score("CDU/CSU", "AfD", 0.3)
-        self.set_collaboration_score("CDU/CSU", "Grüne", 0.6)
-        self.set_collaboration_score("CDU/CSU", "SPD", 0.7)
-        self.set_collaboration_score("CDU/CSU", "FDP", 0.9)
-        self.set_collaboration_score("CDU/CSU", "Linke", 0.3)
-        self.set_collaboration_score("CDU/CSU", "BSW", 0.4)
+        self.set_collaboration_score("CDU/CSU", "AfD", random.uniform(0.5, 0.7))
+        self.set_collaboration_score("CDU/CSU", "Grüne", random.uniform(0.5, 0.7))
+        self.set_collaboration_score("CDU/CSU", "SPD", random.uniform(0.6, 0.8))
+        self.set_collaboration_score("CDU/CSU", "FDP", random.uniform(0.8, 1))
+        self.set_collaboration_score("CDU/CSU", "Linke", random.uniform(0.3, 0.5))
+        self.set_collaboration_score("CDU/CSU", "BSW", random.uniform(0.3, 0.5))
 
-        self.set_collaboration_score("AfD", "Grüne", 0.1)
-        self.set_collaboration_score("AfD", "SPD", 0.2)
-        self.set_collaboration_score("AfD", "FDP", 0.3)
-        self.set_collaboration_score("AfD", "Linke", 0.1)
-        self.set_collaboration_score("AfD", "BSW", 0.3)
+        self.set_collaboration_score("AfD", "Grüne", random.uniform(0.2, 0.4))
+        self.set_collaboration_score("AfD", "SPD", random.uniform(0.2, 0.4))
+        self.set_collaboration_score("AfD", "FDP", random.uniform(0.4, 0.6))
+        self.set_collaboration_score("AfD", "Linke", random.uniform(0.1, 0.3))
+        self.set_collaboration_score("AfD", "BSW", random.uniform(0.3, 0.5))
 
-        self.set_collaboration_score("Grüne", "SPD", 0.9)
-        self.set_collaboration_score("Grüne", "FDP", 0.6)
-        self.set_collaboration_score("Grüne", "Linke", 0.7)
-        self.set_collaboration_score("Grüne", "BSW", 0.5)
+        self.set_collaboration_score("Grüne", "SPD", random.uniform(0.8, 1))
+        self.set_collaboration_score("Grüne", "FDP", random.uniform(0.5, 0.7))
+        self.set_collaboration_score("Grüne", "Linke", random.uniform(0.6, 0.8))
+        self.set_collaboration_score("Grüne", "BSW", random.uniform(0.5, 0.7))
 
-        self.set_collaboration_score("SPD", "FDP", 0.7)
-        self.set_collaboration_score("SPD", "Linke", 0.5)
-        self.set_collaboration_score("SPD", "BSW", 0.4)
+        self.set_collaboration_score("SPD", "FDP", random.uniform(0.5, 0.7))
+        self.set_collaboration_score("SPD", "Linke", random.uniform(0.5, 0.7))
+        self.set_collaboration_score("SPD", "BSW", random.uniform(0.5, 0.7))
 
-        self.set_collaboration_score("FDP", "Linke", 0.1)
-        self.set_collaboration_score("FDP", "BSW", 0.1)
+        self.set_collaboration_score("FDP", "Linke", random.uniform(0.1, 0.3))
+        self.set_collaboration_score("FDP", "BSW", random.uniform(0.1, 0.2))
 
-        self.set_collaboration_score("Linke", "BSW", 0.6)
+        self.set_collaboration_score("Linke", "BSW", random.uniform(0.6, 0.8))
 
     def set_collaboration_score(self, party1, party2, score):
         """Setzt den Zusammenarbeitsscore für zwei Parteien."""
