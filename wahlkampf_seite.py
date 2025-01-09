@@ -447,6 +447,16 @@ class ZufallsEventSeite(tk.Frame):
                     {"text": "Solange der Bürgermeister sich mir nicht nähert ist alles gut und Sie appellieren an traditionelle Werte.", "weight": random.uniform(-1.5, -0.5)}
                 ]
             }
+            {
+                "title": "Neuer Wahlkampfslogan in Bayern enthüllt: 'Bayern First!'",
+                "description": "Eine Partei schlägt vor, dass Bayern eine Sonderstellung in der Bundespolitik erhalten soll. Andere Bundesländer reagieren irritiert. Was tun Sie?",
+                "image": "bayernfirst.png",
+                "options": [
+                    {"text": "Unterstützen Sie den Vorschlag und schlagen einen Bier-Soli vor", "weight": random.uniform(-0.5, 0.5)},
+                    {"text": "Fordern Sie, dass alle Bundesländer gleich behandelt werden", "weight": random.uniform(1, 1.5)},
+                    {"text": "Schlagen Sie vor, dass Bayern sich von Deutschland trennt, wenn sie das ernst meinen", "weight": random.uniform(0.5, 1.5)}
+                ]
+            }
             # Weitere Events können hier hinzugefügt werden
         ]
 
