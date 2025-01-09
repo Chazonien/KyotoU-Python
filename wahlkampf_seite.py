@@ -446,7 +446,7 @@ class ZufallsEventSeite(tk.Frame):
                     {"text": "Reagieren Sie neutral und betonen, dass die sexuelle Orientierung Privatsache ist.", "weight": random.uniform(-0.5, 0.5)},
                     {"text": "Solange der Bürgermeister sich mir nicht nähert ist alles gut und Sie appellieren an traditionelle Werte.", "weight": random.uniform(-1.5, -0.5)}
                 ]
-            }
+            },
             {
                 "title": "Neuer Wahlkampfslogan in Bayern enthüllt: 'Bayern First!'",
                 "description": "Eine Partei schlägt vor, dass Bayern eine Sonderstellung in der Bundespolitik erhalten soll. Andere Bundesländer reagieren irritiert. Was tun Sie?",
