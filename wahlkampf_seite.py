@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 import random
-import time
+import itertools
 from startseite import kandidaten  # Import candidates data
 import os
 from PIL import Image, ImageTk
@@ -559,7 +559,48 @@ class SpielendeSeite(tk.Frame):
         for party, value in polls.items():
             self.polls_canvas.create_text(200, y_offset, text=f"{party}: {value:.1f}%", fill="black", font=("Arial", 12))
             y_offset += 20
+        
+        # Sitzverteilung berechnen
+        total_seats = 650
+        seat_distribution = {
+            party: round((value / total_votes) * total_seats)
+            for party, value in visible_polls.items()
+        }
 
+        # Sitzverteilung anzeigen
+        y_offset += 20
+        self.polls_canvas.create_text(200, y_offset, text="Sitzverteilung:", fill="black", font=("Arial", 12, "bold"))
+        y_offset += 20
+        for party, seats in seat_distribution.items():
+            self.polls_canvas.create_text(200, y_offset, text=f"{party}: {seats} Sitze", fill="black", font=("Arial", 12))
+            y_offset += 20
+
+        # Mögliche Koalitionen berechnen
+        majority_threshold = total_seats / 2  # Mehrheitsgrenze
+        possible_coalitions = []
+
+        # Zweier- und Dreier-Kombinationen prüfen
+        parties = list(visible_polls.keys())
+        for r in (2, 3):  # Kombinationen aus 2 oder 3 Parteien
+            for combination in itertools.combinations(parties, r):
+                total_seats_combination = sum(seat_distribution[party] for party in combination)
+                # Falls 2 Parteien schon eine Mehrheit haben, keine Dreier-Koalition
+                if r == 3 and total_seats_combination > 625:
+                    continue  # Überspringe diese Dreier-Koalition
+                if total_seats_combination > majority_threshold:
+                    # Sortiere die Parteien innerhalb der Koalition nach den Sitzen (absteigend)
+                    sorted_combination = sorted(combination, key=lambda party: seat_distribution[party], reverse=True)
+                    possible_coalitions.append((sorted_combination, total_seats_combination))
+
+        # Koalitionen anzeigen (auf der rechten Seite)
+        x_offset = 400
+        y_offset = 50
+        self.polls_canvas.create_text(x_offset, y_offset, text="Mögliche Koalitionen:", fill="black", font=("Arial", 12, "bold"), anchor="w")
+        y_offset += 20
+        for coalition, seats in possible_coalitions:
+            coalition_text = " + ".join(coalition)
+            self.polls_canvas.create_text(x_offset, y_offset, text=f"{coalition_text}: {seats} Sitze", fill="black", font=("Arial", 12), anchor="w")
+            y_offset += 20
 
     def get_color(self, party):
         """Gibt Farben für Parteien zurück."""
