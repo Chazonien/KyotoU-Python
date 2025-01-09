@@ -539,6 +539,100 @@ class SpielendeSeite(tk.Frame):
         self.polls_canvas = tk.Canvas(self, width=800, height=600, bg="white")
         self.polls_canvas.pack(pady=20)
 
+        self.collaboration_matrix = {}
+
+        self.set_collaboration_score("CDU/CSU", "AfD", 0.3)
+        self.set_collaboration_score("CDU/CSU", "Grüne", 0.6)
+        self.set_collaboration_score("CDU/CSU", "SPD", 0.7)
+        self.set_collaboration_score("CDU/CSU", "FDP", 0.9)
+        self.set_collaboration_score("CDU/CSU", "Linke", 0.3)
+        self.set_collaboration_score("CDU/CSU", "BSW", 0.4)
+
+        self.set_collaboration_score("AfD", "Grüne", 0.1)
+        self.set_collaboration_score("AfD", "SPD", 0.2)
+        self.set_collaboration_score("AfD", "FDP", 0.3)
+        self.set_collaboration_score("AfD", "Linke", 0.1)
+        self.set_collaboration_score("AfD", "BSW", 0.3)
+
+        self.set_collaboration_score("Grüne", "SPD", 0.9)
+        self.set_collaboration_score("Grüne", "FDP", 0.6)
+        self.set_collaboration_score("Grüne", "Linke", 0.7)
+        self.set_collaboration_score("Grüne", "BSW", 0.5)
+
+        self.set_collaboration_score("SPD", "FDP", 0.7)
+        self.set_collaboration_score("SPD", "Linke", 0.5)
+        self.set_collaboration_score("SPD", "BSW", 0.4)
+
+        self.set_collaboration_score("FDP", "Linke", 0.1)
+        self.set_collaboration_score("FDP", "BSW", 0.1)
+
+        self.set_collaboration_score("Linke", "BSW", 0.6)
+
+    def set_collaboration_score(self, party1, party2, score):
+        """Setzt den Zusammenarbeitsscore für zwei Parteien."""
+        if party1 not in self.collaboration_matrix:
+            self.collaboration_matrix[party1] = {}
+        if party2 not in self.collaboration_matrix:
+            self.collaboration_matrix[party2] = {}
+        self.collaboration_matrix[party1][party2] = score
+        self.collaboration_matrix[party2][party1] = score
+
+    def berechne_koalitionsbewertung(self, koalition, seat_distribution):
+        """Berechnet die Bewertung einer Koalition basierend auf den Sitzen und Zusammenarbeitsscores."""
+        gesamt_sitze = sum(seat_distribution[party] for party in koalition)
+        zusammenarbeit_score = 0
+        anzahl_koalitionspaare = 0
+        
+        # Berechne den Durchschnitt der Zusammenarbeitsscores für alle Paarungen innerhalb der Koalition
+        for i in range(len(koalition)):
+            for j in range(i + 1, len(koalition)):
+                party1, party2 = koalition[i], koalition[j]
+                zusammenarbeit_score += self.collaboration_matrix.get(party1, {}).get(party2, 0)
+                anzahl_koalitionspaare += 1
+
+        # Normierung des Zusammenarbeitsscores basierend auf der Koalitionsgröße (Zwei- oder Dreierbündnis)
+        if anzahl_koalitionspaare > 0:
+            durchschnitt_zusammenarbeit = zusammenarbeit_score / anzahl_koalitionspaare
+        else:
+            durchschnitt_zusammenarbeit = 1  # Falls keine Paare existieren, also bei einer Einzelpartei
+
+        # Gesamtbewertung der Koalition
+        bewertung = (gesamt_sitze * durchschnitt_zusammenarbeit)
+        return bewertung
+
+    def bestimme_best_koalition(self, possible_coalitions, seat_distribution):
+        """Bestimmt die Koalition mit der besten Bewertung."""
+        koalition_bewertungen = []
+
+        for coalition in possible_coalitions:
+            bewertung = self.berechne_koalitionsbewertung(coalition, seat_distribution)
+            koalition_bewertungen.append((coalition, bewertung))
+
+        # Sortiere Koalitionen nach ihrer Bewertung (höchste Bewertung zuerst)
+        koalition_bewertungen.sort(key=lambda x: x[1], reverse=True)
+        
+        # Rückgabe der besten Koalition (erste in der sortierten Liste)
+        return koalition_bewertungen[0][0] if koalition_bewertungen else None
+    
+    def get_candidate_image(self, party):
+        """Gibt das Bild des Kandidaten der Partei zurück."""
+        # Hier kannst du das Bild des Kandidaten je nach Partei definieren.
+        candidate_images = {
+            "CDU/CSU": r"bilder\cdu.jpg",
+            "SPD": r"bilder\spd.jpg",
+            "Grüne": r"bilder\gruene.jpg",
+            "FDP": r"bilder\fdp.jpg",
+            "AfD": r"bilder\afd.jpg",
+            "Linke": r"bilder\linke.jpg",
+            "BSW": r"bilder\bsw.jpg",
+        }
+        
+        image_path = candidate_images.get(party, None)
+        if image_path:
+            # Hier kannst du das Bild laden und zurückgeben (PIL-Image oder Tkinter PhotoImage)
+            return tk.PhotoImage(file=image_path)  # Beispiel
+        return None
+
     def zeige_polls(self, polls):
         """Zeigt die Endumfragen als Halbkreis-Diagramm an."""
         self.polls_canvas.delete("all")  # Vorherigen Inhalt löschen
@@ -546,6 +640,12 @@ class SpielendeSeite(tk.Frame):
         # Parteien mit >= 5% filtern
         visible_polls = {party: value for party, value in polls.items() if value >= 5 and party != "Sonstige"}
         total_votes = sum(visible_polls.values())
+
+        # Define the desired order of the parties
+        party_order = ["BSW", "Linke", "SPD", "Grüne", "FDP", "CDU/CSU", "AfD"]
+
+        # Sort the visible_polls dictionary based on the party_order
+        visible_polls = {party: visible_polls[party] for party in party_order if party in visible_polls}
 
         # Berechne Halbkreis-Werte
         start_angle = 180  # Halbkreis beginnt bei 180° (links)
@@ -559,7 +659,7 @@ class SpielendeSeite(tk.Frame):
         for party, value in polls.items():
             self.polls_canvas.create_text(200, y_offset, text=f"{party}: {value:.1f}%", fill="black", font=("Arial", 12))
             y_offset += 20
-        
+
         # Sitzverteilung berechnen
         total_seats = 650
         seat_distribution = {
@@ -584,13 +684,27 @@ class SpielendeSeite(tk.Frame):
         for r in (2, 3):  # Kombinationen aus 2 oder 3 Parteien
             for combination in itertools.combinations(parties, r):
                 total_seats_combination = sum(seat_distribution[party] for party in combination)
-                # Falls 2 Parteien schon eine Mehrheit haben, keine Dreier-Koalition
-                if r == 3 and total_seats_combination > 625:
-                    continue  # Überspringe diese Dreier-Koalition
-                if total_seats_combination > majority_threshold:
-                    # Sortiere die Parteien innerhalb der Koalition nach den Sitzen (absteigend)
+                
+                # Wenn es eine Dreier-Koalition ist und 2 Parteien bereits eine Mehrheit haben
+                if r == 3:
+                    # Prüfe alle Zweier-Kombinationen innerhalb der Dreier-Koalition
+                    for subcombination in itertools.combinations(combination, 2):
+                        total_seats_subcombination = sum(seat_distribution[party] for party in subcombination)
+                        if total_seats_subcombination > majority_threshold:
+                            break  # Überspringe diese 3er-Koalition
+                    else:
+                        # Nur hinzufügen, wenn keine 2-Parteien-Koalition die Mehrheit hat
+                        if total_seats_combination > majority_threshold:
+                            sorted_combination = sorted(combination, key=lambda party: seat_distribution[party], reverse=True)
+                            possible_coalitions.append((sorted_combination, total_seats_combination))
+                
+                elif total_seats_combination > majority_threshold:
+                    # Für 2-Parteien-Kombinationen direkt hinzufügen
                     sorted_combination = sorted(combination, key=lambda party: seat_distribution[party], reverse=True)
                     possible_coalitions.append((sorted_combination, total_seats_combination))
+
+        # Bestimme die Koalition mit der höchsten Bewertung
+        beste_koalition = self.bestimme_best_koalition([coalition for coalition, _ in possible_coalitions], seat_distribution)
 
         # Koalitionen anzeigen (auf der rechten Seite)
         x_offset = 400
@@ -602,6 +716,25 @@ class SpielendeSeite(tk.Frame):
             self.polls_canvas.create_text(x_offset, y_offset, text=f"{coalition_text}: {seats} Sitze", fill="black", font=("Arial", 12), anchor="w")
             y_offset += 20
 
+        # "Gewinner"-Koalition anzeigen
+        x_offset = 400
+        y_offset = 340
+        self.polls_canvas.create_text(x_offset, y_offset, text="Gewinner Koalition:", fill="black", font=("Arial", 12, "bold"), anchor="w")
+        y_offset += 20
+        if beste_koalition:
+            coalition_text = " + ".join(beste_koalition)
+            self.polls_canvas.create_text(x_offset, y_offset, text=f"{coalition_text}", fill="black", font=("Arial", 12), anchor="w")
+            y_offset += 40
+
+            # Bild des Kandidaten der größten Partei in der Koalition anzeigen
+            largest_party = beste_koalition[0]  # Partei mit den meisten Sitzen (erste in der Liste)
+            """"
+            candidate_image = self.get_candidate_image(largest_party)
+            self.polls_canvas.create_image(x_offset, y_offset, image=candidate_image)  # Bild anzeigen
+            y_offset += 150
+            """
+
+
     def get_color(self, party):
         """Gibt Farben für Parteien zurück."""
         colors = {
@@ -611,6 +744,6 @@ class SpielendeSeite(tk.Frame):
             "FDP": "yellow",
             "AfD": "blue",
             "Linke": "purple",
-            "BSW": "gray"
+            "BSW": "darkorchid"
         }
         return colors.get(party, "gray")
