@@ -215,7 +215,7 @@ class WahlkampfSeite(tk.Frame):
         self.normalize_polls()
         
         # Event auslösen
-        if random.uniform(0, 1) < 0.3:
+        if random.uniform(0, 1) < 0.4:
             # Wechsle zur ZufallsEventSeite und zeige das Event an
             self.controller.show_frame("ZufallsEventSeite")
             event_seite = self.controller.frames["ZufallsEventSeite"]
@@ -229,7 +229,7 @@ class WahlkampfSeite(tk.Frame):
         if self.turns >= self.max_turns:
             self.controller.show_frame("SpielendeSeite")
             spielende_seite = self.controller.frames["SpielendeSeite"]
-            spielende_seite.zeige_polls(self.polls)
+            spielende_seite.zeige_endscreen(self.polls)
             return
 
         # Speichert die Umfrageergebnisse nach den durchgeführten Aktionen
@@ -360,7 +360,7 @@ class ZufallsEventSeite(tk.Frame):
             {
                 "title": "Umweltdebatte entbrannt!",
                 "description": "Umweltbewegungen wie Fridays For Future verstärken aufeinmal die Proteste kurz vor der Wahl. Wie reagieren Sie?",
-                "image": "bilder/umwelt-debatte.png",
+                "image": r"bilder/umwelt-debatte.png",
                 "options": [
                     {"text": "Konstruktive Auseinandersetzung mit den Demonstranten", "weight": random.uniform(0.5, 1.5)},
                     {"text": "Die scheiß Drecksgören sollen zurück in die Schule", "weight": random.uniform(-1, 0)},
@@ -370,7 +370,7 @@ class ZufallsEventSeite(tk.Frame):
             {
                 "title": "Maut-Debakel 2.0!",
                 "description": "Nach einem vorgeschlagenen Plan zur Einführung einer Fahrrad-Maut, hagelt es Proteste von Radfahrverbänden. Wie gehen Sie mit der Situation um?",
-                "image": "bilder/maut-debakel.png",
+                "image": r"bilder/maut-debakel.png",
                 "options": [
                     {"text": "Den Plan sofort zurückziehen und PR Bilder mit einem Fahrrad (wie fährt man das eigentlich ohne Fahrer?)", "weight": random.uniform(0.5, 1.5)},
                     {"text": "Beharren Sie auf die Maut: 'Radwege sind Luxus! Autos haben ein Recht zum Rasen!'", "weight": random.uniform(-1.5, -0.5)},
@@ -380,7 +380,7 @@ class ZufallsEventSeite(tk.Frame):
             {
                 "title": "Flutkatastrophe im nächsten Tal!",
                 "description": "Es regnet mal wieder wie in Großbritannien und halb Thüringen ist abgesoffen. Bei einer Veranstaltung, bei der es um strukturelle Hilfe geht, lachst du ausversehen laut. was machst du?",
-                "image": "bilder/laschet-lacht.png",
+                "image": r"bilder/laschet-lacht.png",
                 "options": [
                     {"text": "Direkt nach Veröffentlichung der Bilder entschuldigen (sowie jeder folgender Wahlkampfeveranstaltung)", "weight": random.uniform(-1.5, 0)},
                     {"text": "Du gehst vor die Presse und erzählst den Witz", "weight": random.uniform(-2, -1)},
@@ -390,7 +390,7 @@ class ZufallsEventSeite(tk.Frame):
             {
                 "title": "Elon Musk wird Kolumnist der WELT!",
                 "description": "Elon Musk schreibt eine Kolumne mit dem Titel 'Deutschland braucht mehr Hustle'. Sie wird sofort kontrovers diskutiert. Wie reagieren Sie?",
-                "image": "bilder/musk-kolumne.png",
+                "image": r"bilder/musk-kolumne.png",
                 "options": [
                     {"text": "Loben Sie die Kolumne als 'frischen Wind' für die deutsche Medienlandschaft", "weight": random.uniform(-0.5, 0.5)},
                     {"text": "Verurteilen Sie die Kolumne als 'kapitalistischen Unsinn'", "weight": random.uniform(-1, 1)},
@@ -400,7 +400,7 @@ class ZufallsEventSeite(tk.Frame):
             {
                 "title": "BER plant den 'Terminal für die Zukunft'!",
                 "description": "Ein neuer Terminal am BER wird angekündigt: Diesmal speziell für Hyperloop-Passagiere. Die Kosten sind unklat. Wie reagieren Sie?",
-                "image": "bilder/ber-terminal.png",
+                "image": r"bilder/ber-terminal.png",
                 "options": [
                     {"text": "Feiern Sie das Projekt als Innovation 'Made in Germany'", "weight": random.uniform(-0.25, 0.25)},
                     {"text": "Kritisieren Sie den Plan und fordern stattdessen funktionierende Rolltreppen", "weight": random.uniform(1, 1.5)},
@@ -410,7 +410,7 @@ class ZufallsEventSeite(tk.Frame):
             {
                 "title": "Musk gegen Gewerkschaften!",
                 "description": "Elon Musk fordert ein Verbot von Gewerkschaften in Deutschland, da sie 'Innovation behindern'. Was sagen Sie dazu?",
-                "image": "bilder/musk-gewerkschaften.png",
+                "image": r"bilder/musk-gewerkschaften.png",
                 "options": [
                     {"text": "Verteidigen Sie Gewerkschaften als 'Grundpfeiler der Demokratie'", "weight": random.uniform(0.5, 1.5)},
                     {"text": "Unterstützen Sie Musk und erklären, dass Gewerkschaften 'veraltet' sind", "weight": random.uniform(-1.5, -0.5)},
@@ -420,7 +420,7 @@ class ZufallsEventSeite(tk.Frame):
             {
                 "title": "Trump twittert: 'Germany owes me Bratwurst!'",
                 "description": "Donald Trump behauptet auf Twitter, Deutschland habe ihm 'eine Bratwurst und mehr Respekt' versprochen. Was tun Sie?",
-                "image": "bilder/trump-twitter.png",
+                "image": r"bilder/trump-twitter.png",
                 "options": [
                     {"text": "Sie vermitteln einen Würstchenstandbesuch mit Markus Söder", "weight": random.uniform(0.5, 1.5)},
                     {"text": "Ignorieren Sie den Tweet und hoffen, dass es niemand ernst nimmt", "weight": random.uniform(-0.5, 0.5)},
@@ -430,7 +430,7 @@ class ZufallsEventSeite(tk.Frame):
             {
                 "title": "EU führt Kartoffel-Norm 3000 ein!",
                 "description": "Die EU beschließt eine neue Richtlinie: Kartoffeln dürfen maximal 8 cm lang und 4 cm dick sein. Bauern protestieren. Was tun Sie?",
-                "image": "bilder/eu-kartoffeln.png",
+                "image": r"bilder/eu-kartoffeln.png",
                 "options": [
                     {"text": "Unterstützen Sie die Bauern: 'Wir lassen uns die Folienkartoffel nicht verbieten!'", "weight": random.uniform(0.5, 1.5)},
                     {"text": "Verteidigen Sie die EU und erklären die Regelung als 'wissenschaftlich fundiert'", "weight": random.uniform(-1.5, -0.5)},
@@ -440,7 +440,7 @@ class ZufallsEventSeite(tk.Frame):
             {
                 "title": "Bürgermeister outet sich öffentlich!",
                 "description": "Ein Bürgermeister einer Großstadt macht öffentlich, dass er homosexuell ist. Die Nachricht sorgt für unterschiedliche Reaktionen in der Gesellschaft. Wie positionieren Sie sich?",
-                "image": "bilder/wowereit.png",
+                "image": r"bilder/wowereit.png",
                 "options": [
                     {"text": "Feiern Sie den Mut und sprechen Sie sich für mehr Offenheit und Toleranz aus.", "weight": random.uniform(0.5, 1.5)},
                     {"text": "Reagieren Sie neutral und betonen, dass die sexuelle Orientierung Privatsache ist.", "weight": random.uniform(-0.5, 0.5)},
@@ -450,7 +450,7 @@ class ZufallsEventSeite(tk.Frame):
             {
                 "title": "Neuer Wahlkampfslogan in Bayern enthüllt: 'Bayern First!'",
                 "description": "Eine Partei schlägt vor, dass Bayern eine Sonderstellung in der Bundespolitik erhalten soll. Andere Bundesländer reagieren irritiert. Was tun Sie?",
-                "image": "bilder/bayernfirst.png",
+                "image": r"bilder/bayernfirst.png",
                 "options": [
                     {"text": "Unterstützen Sie den Vorschlag und schlagen einen Bier-Soli vor", "weight": random.uniform(-0.5, 0.5)},
                     {"text": "Fordern Sie, dass alle Bundesländer gleich behandelt werden", "weight": random.uniform(1, 1.5)},
@@ -460,7 +460,7 @@ class ZufallsEventSeite(tk.Frame):
             {
                 "title": "Jugendwort des Jahres!'",
                 "description": "Susanne Daubner haut wieder das Jugendwort des Jahres raus. Bei einer Wahlkampfveranstaltung wollen Sie mit der Jugend anknüpfen. Was sagen Sie?",
-                "image": "jugendwort.png",
+                "image": r"bilder/jugendwort.png",
                 "options": [
                     {"text": "Ich bin ein richtiges Sigma! Wer micht wählt +5000 Aura", "weight": random.uniform(0.5, 1.5)},
                     {"text": "Cringe wer nicht wählen geht! Richtige Lowperformer!", "weight": random.uniform(0, 1)},
@@ -470,7 +470,7 @@ class ZufallsEventSeite(tk.Frame):
             {
                 "title": "Bierzelt Wahlkampf!",
                 "description": "Wie jeder gute Deutsche, trifft man seine Wahlentscheidung im Bierzelt! Beim dritten Bier kommt es dazu: Gras!",
-                "image": "cannabis.png",
+                "image": r"bilder/cannabis.png",
                 "options": [
                     {"text": "Karl Lauterbach auf die Bühne holen und einen Bubatz durchziehen", "weight": random.uniform(0.5, 1.5)},
                     {"text": "Kiffer raus aus Bayern", "weight": random.uniform(-1, 0)},
@@ -656,14 +656,19 @@ class SpielendeSeite(tk.Frame):
             "Linke": r"bilder\linke.jpg",
             "BSW": r"bilder\bsw.jpg",
         }
-        
+
         image_path = candidate_images.get(party, None)
         if image_path:
-            # Hier kannst du das Bild laden und zurückgeben (PIL-Image oder Tkinter PhotoImage)
-            return tk.PhotoImage(file=image_path)  # Beispiel
+            try:
+                # Verwende Pillow, um das Bild zu öffnen und als Tkinter-Image zu konvertieren
+                pil_image = Image.open(image_path)
+                candidate_image = ImageTk.PhotoImage(pil_image)  # Umwandlung für Tkinter
+                return candidate_image
+            except Exception as e:
+                print(f"Error loading image: {e}")
         return None
 
-    def zeige_polls(self, polls):
+    def zeige_endscreen(self, polls):
         """Zeigt die Endumfragen als Halbkreis-Diagramm an."""
         self.polls_canvas.delete("all")  # Vorherigen Inhalt löschen
 
@@ -764,6 +769,20 @@ class SpielendeSeite(tk.Frame):
             y_offset += 150
             """
 
+        # Hier können Sie das Bild des Kandidaten oder der Partei laden
+        candidate_image = self.get_candidate_image(largest_party)  # Sie müssen sicherstellen, dass diese Methode existiert
+        if candidate_image:
+            # Um das Bild anzuzeigen, müssen wir es in ein Tkinter-kompatibles Format konvertieren
+            img = Image.open(candidate_image)
+            img = img.resize((100, 100))  # Optional: Größe anpassen
+            img_tk = ImageTk.PhotoImage(img)
+
+            # Bild auf dem Canvas anzeigen
+            self.polls_canvas.create_image(x_offset, y_offset, image=img_tk)
+            y_offset += 150  # Optional: Anpassen des Abstands
+
+            # Referenz zum Bild speichern, damit es nicht gelöscht wird
+            self.polls_canvas.image = img_tk  # Referenz halten, um das Bild anzuzeigen
 
     def get_color(self, party):
         """Gibt Farben für Parteien zurück."""
