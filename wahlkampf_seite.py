@@ -643,30 +643,6 @@ class SpielendeSeite(tk.Frame):
         
         # Rückgabe der besten Koalition (erste in der sortierten Liste)
         return koalition_bewertungen[0][0] if koalition_bewertungen else None
-    
-    def get_candidate_image(self, party):
-        """Gibt das Bild des Kandidaten der Partei zurück."""
-        # Hier kannst du das Bild des Kandidaten je nach Partei definieren.
-        candidate_images = {
-            "CDU/CSU": r"bilder\cdu.jpg",
-            "SPD": r"bilder\spd.jpg",
-            "Grüne": r"bilder\gruene.jpg",
-            "FDP": r"bilder\fdp.jpg",
-            "AfD": r"bilder\afd.jpg",
-            "Linke": r"bilder\linke.jpg",
-            "BSW": r"bilder\bsw.jpg",
-        }
-
-        image_path = candidate_images.get(party, None)
-        if image_path:
-            try:
-                # Verwende Pillow, um das Bild zu öffnen und als Tkinter-Image zu konvertieren
-                pil_image = Image.open(image_path)
-                candidate_image = ImageTk.PhotoImage(pil_image)  # Umwandlung für Tkinter
-                return candidate_image
-            except Exception as e:
-                print(f"Error loading image: {e}")
-        return None
 
     def zeige_endscreen(self, polls):
         """Zeigt die Endumfragen als Halbkreis-Diagramm an."""
@@ -763,26 +739,6 @@ class SpielendeSeite(tk.Frame):
 
             # Bild des Kandidaten der größten Partei in der Koalition anzeigen
             largest_party = beste_koalition[0]  # Partei mit den meisten Sitzen (erste in der Liste)
-            """"
-            candidate_image = self.get_candidate_image(largest_party)
-            self.polls_canvas.create_image(x_offset, y_offset, image=candidate_image)  # Bild anzeigen
-            y_offset += 150
-            """
-
-        # Hier können Sie das Bild des Kandidaten oder der Partei laden
-        candidate_image = self.get_candidate_image(largest_party)  # Sie müssen sicherstellen, dass diese Methode existiert
-        if candidate_image:
-            # Um das Bild anzuzeigen, müssen wir es in ein Tkinter-kompatibles Format konvertieren
-            img = Image.open(candidate_image)
-            img = img.resize((100, 100))  # Optional: Größe anpassen
-            img_tk = ImageTk.PhotoImage(img)
-
-            # Bild auf dem Canvas anzeigen
-            self.polls_canvas.create_image(x_offset, y_offset, image=img_tk)
-            y_offset += 150  # Optional: Anpassen des Abstands
-
-            # Referenz zum Bild speichern, damit es nicht gelöscht wird
-            self.polls_canvas.image = img_tk  # Referenz halten, um das Bild anzuzeigen
 
     def get_color(self, party):
         """Gibt Farben für Parteien zurück."""
