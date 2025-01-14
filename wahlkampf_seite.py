@@ -528,6 +528,12 @@ class ZufallsEventSeite(tk.Frame):
         own_change = self.simulate_voter_shift_event(action_weight, current_party)
         # Aktualisiere die Polls in der Wahlkampf-Seite
         wahlkampf_seite.polls[current_party] += own_change
+        self.normalize_polls()
+        while sum(wahlkampf_seite.polls.values()) > 100:
+            x = random.randint(0,6)
+            randompartei, _ = wahlkampf_seite.polls.items()
+            y = randompartei[x]
+            wahlkampf_seite.polls[y] -= 0.1
         # Wechsel zurück zur Wahlkampf-Seite
         self.controller.show_frame("WahlkampfSeite")
 
@@ -559,16 +565,15 @@ class ZufallsEventSeite(tk.Frame):
     def normalize_polls(self):
         """Normalisiert die Poll-Werte."""
         # Setze negative Werte auf 0
-        for party in self.controller.polls:
-            if self.controller.polls[party] < 0:
-                self.controller.polls[party] = 0
+        wahlkampf_seite = self.controller.frames["WahlkampfSeite"]
+        for party in wahlkampf_seite.polls:
+            if wahlkampf_seite.polls[party] < 0:
+                wahlkampf_seite.polls[party] = 0
 
         # Normalisiere die Werte, sodass sie insgesamt 100% ergeben       
-        total = sum(self.controller.polls.values())
-        for party in self.controller.polls:
-            self.controller.polls[party] = round(self.controller.polls[party] / total * 100, 1)
-
-        print("Normalisierte Polls:", self.controller.polls)
+        total = sum(wahlkampf_seite.polls.values())
+        for party in wahlkampf_seite.polls:
+            wahlkampf_seite.polls[party] = round(wahlkampf_seite.polls[party] / total * 100, 1)
 
 class SpielendeSeite(tk.Frame):
     def __init__(self, parent, controller):
