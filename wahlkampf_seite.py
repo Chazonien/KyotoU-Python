@@ -569,6 +569,12 @@ class SpielendeSeite(tk.Frame):
         self.polls_canvas = tk.Canvas(self, width=800, height=600, bg="white")
         self.polls_canvas.pack(pady=20)
 
+        self.bundeskanzler_label = tk.Label(self, text="", font=("Arial", 16, "bold"), bg="white", fg="black")
+        self.bundeskanzler_label.pack(pady=10)
+
+        self.kandidaten_image_label = tk.Label(self, bg="white")
+        self.kandidaten_image_label.pack(pady=20)
+
         self.collaboration_matrix = {}
 
         self.set_collaboration_score("CDU/CSU", "AfD", random.uniform(0.5, 0.7))
@@ -737,8 +743,17 @@ class SpielendeSeite(tk.Frame):
             self.polls_canvas.create_text(x_offset, y_offset, text=f"{coalition_text}", fill="black", font=("Arial", 12), anchor="w")
             y_offset += 40
 
-            # Bild des Kandidaten der größten Partei in der Koalition anzeigen
-            largest_party = beste_koalition[0]  # Partei mit den meisten Sitzen (erste in der Liste)
+            # Label und Bild des Kandidaten der größten Partei in der Koalition unten rechts im Canvas anzeigen
+            self.polls_canvas.create_text(400, 400, text="Und der neue deutsche Bundeskanzler ist:", fill="black", font=("Arial", 12, "bold"), anchor="w")
+            
+            largest_party = beste_koalition[0]  # Partei mit den meisten Sitzen
+            kandidat = kandidaten.get(largest_party)
+            if kandidat and os.path.exists(kandidat["bild"]):
+                image = Image.open(kandidat["bild"]).resize((150, 150), Image.Resampling.LANCZOS)
+                self.kandidat_image = ImageTk.PhotoImage(image)
+                self.polls_canvas.create_image(400, 500, image=self.kandidat_image, anchor="w")
+            else:
+                self.polls_canvas.create_text(400, 500, text="Bild nicht verfügbar", fill="red", font=("Arial", 14), anchor="w")
 
     def get_color(self, party):
         """Gibt Farben für Parteien zurück."""
