@@ -558,6 +558,12 @@ class ZufallsEventSeite(tk.Frame):
 
     def normalize_polls(self):
         """Normalisiert die Poll-Werte."""
+        # Setze negative Werte auf 0
+        for party in self.controller.polls:
+            if self.controller.polls[party] < 0:
+                self.controller.polls[party] = 0
+
+        # Normalisiere die Werte, sodass sie insgesamt 100% ergeben       
         total = sum(self.controller.polls.values())
         for party in self.controller.polls:
             self.controller.polls[party] = round(self.controller.polls[party] / total * 100, 1)
