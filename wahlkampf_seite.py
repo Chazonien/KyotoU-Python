@@ -250,7 +250,7 @@ class WahlkampfSeite(tk.Frame):
 
     def simulate_voter_shift(self, current_party, own_weight):
         """Simulates voter shift based on the player's action."""
-        total_shift = random.uniform(0.5, 5)
+        total_shift = random.uniform(1, 5)
         party_weights = {party: random.uniform(-1, 1) for party in self.polls if party != current_party}
 
         positive_sum = sum(w for w in party_weights.values() if w > 0)
@@ -529,11 +529,6 @@ class ZufallsEventSeite(tk.Frame):
         # Aktualisiere die Polls in der Wahlkampf-Seite
         wahlkampf_seite.polls[current_party] += own_change
         self.normalize_polls()
-        while sum(wahlkampf_seite.polls.values()) > 100:
-            x = random.randint(0,6)
-            randompartei, _ = wahlkampf_seite.polls.items()
-            y = randompartei[x]
-            wahlkampf_seite.polls[y] -= 0.1
         # Wechsel zurück zur Wahlkampf-Seite
         self.controller.show_frame("WahlkampfSeite")
 
