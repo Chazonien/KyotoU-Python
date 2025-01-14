@@ -209,7 +209,6 @@ class WahlkampfSeite(tk.Frame):
 
         # Simuliere Verschiebung der Wählerstimmen
         own_change = self.simulate_voter_shift(party, own_weight)
-        
         # Aktualisiere Polls
         self.polls[party] += own_change
         self.normalize_polls()
@@ -220,7 +219,7 @@ class WahlkampfSeite(tk.Frame):
             self.controller.show_frame("ZufallsEventSeite")
             event_seite = self.controller.frames["ZufallsEventSeite"]
             event_seite.zeige_event()
-
+        
         # Rundenzähler aktualisieren
         self.turns += 1
         self.weeks_label.config(text=f"{self.max_turns - self.turns} Wochen bis zur Wahl")
@@ -233,6 +232,7 @@ class WahlkampfSeite(tk.Frame):
             return
 
         # Speichert die Umfrageergebnisse nach den durchgeführten Aktionen
+        self.normalize_polls()
         polls_after = self.polls.copy()
 
         # Berechnet die Diifferenz der Umfrageergebnisse
@@ -331,6 +331,12 @@ class WahlkampfSeite(tk.Frame):
 
         # Deaktiviere das Textwidget
         self.label_polls.config(state="disabled")
+    
+    def get_own_party(self):
+        return self.controller.ausgewaehlte_partei
+    
+    def get_current_polls(self):
+        return self.polls
 
 class ZufallsEventSeite(tk.Frame):
     def __init__(self, parent, controller):
@@ -515,24 +521,20 @@ class ZufallsEventSeite(tk.Frame):
         # Gewicht aus der gewählten Option extrahieren
         action_weight = option["weight"]
 
-        # Simuliere die Wählerwanderung basierend auf dem Gewicht
-        own_change = self.simulate_voter_shift_event(action_weight)
-
-        # Aktualisiere die Polls in der Wahlkampf-Seite
         wahlkampf_seite = self.controller.frames["WahlkampfSeite"]
-        wahlkampf_seite.polls[wahlkampf_seite.controller.ausgewaehlte_partei] += own_change
-        wahlkampf_seite.normalize_polls()
+        current_party = wahlkampf_seite.get_own_party()
 
-        # Aktualisiere die GUI der Wahlkampf-Seite
-        wahlkampf_seite.update_polls()
-
+        # Simuliere die Wählerwanderung basierend auf dem Gewicht
+        own_change = self.simulate_voter_shift_event(action_weight, current_party)
+        # Aktualisiere die Polls in der Wahlkampf-Seite
+        wahlkampf_seite.polls[current_party] += own_change
         # Wechsel zurück zur Wahlkampf-Seite
         self.controller.show_frame("WahlkampfSeite")
 
-    def simulate_voter_shift_event(self, action_weight):
+    def simulate_voter_shift_event(self, action_weight, current_party):
         """Simuliert die Veränderung der Wählerstimmen basierend auf dem Gewicht der Aktion."""
         total_shift = random.uniform(0.5, 5)
-        party_weights = {party: random.uniform(-1, 1) for party in self.controller.frames["WahlkampfSeite"].polls}
+        party_weights = {party: random.uniform(-1, 1) for party in self.controller.frames["WahlkampfSeite"].polls if party != current_party}
 
         positive_sum = sum(w for w in party_weights.values() if w > 0) + max(0, action_weight)
         negative_sum = sum(w for w in party_weights.values() if w < 0) + min(0, action_weight)
@@ -545,6 +547,10 @@ class ZufallsEventSeite(tk.Frame):
                 party_changes[party] = -(weight / negative_sum) * total_shift
             else:
                 party_changes[party] = 0
+
+        wahlkampf_seite = self.controller.frames["WahlkampfSeite"]
+        for party, change in party_changes.items():
+            wahlkampf_seite.polls[party] += change
 
         own_change = (action_weight / positive_sum) * total_shift if action_weight > 0 else 0
 
