@@ -873,7 +873,7 @@ class SpielendeSeite(tk.Frame):
 
         # Zweier- und Dreier-Kombinationen prüfen
         parties = list(visible_polls.keys())
-        for r in (1, 3):  # Kombinationen aus 2 oder 3 Parteien
+        for r in (1,2,3):  # Kombinationen aus 2 oder 3 Parteien
             for combination in itertools.combinations(parties, r):
                 total_seats_combination = sum(seat_distribution[party] for party in combination)
                 
@@ -882,9 +882,9 @@ class SpielendeSeite(tk.Frame):
                     for subcombination in itertools.combinations(combination, 1):
                         total_seats_subcombination = sum(seat_distribution[party] for party in subcombination)
                         if total_seats_subcombination > majority_threshold:
-                            break  # Überspringe diese 3er-Koalition
+                            break  # Überspringe diese 2er-Koalition
                     else:
-                        # Nur hinzufügen, wenn keine 2-Parteien-Koalition die Mehrheit hat
+                        # Nur hinzufügen, wenn keine 1-Parteien-Koalition die Mehrheit hat
                         if total_seats_combination > majority_threshold:
                             sorted_combination = sorted(combination, key=lambda party: seat_distribution[party], reverse=True)
                             possible_coalitions.append((sorted_combination, total_seats_combination))
