@@ -40,6 +40,7 @@ ________________________________________
   - As for the action, depending on the choice and some randomness, the poll numbers shift.
   - These events don’t count toward the 15 rounds.
   - As you can see, the poll changes after an event are also displayed. Only the changes caused by the event choice are displayed, not the changes from the action right before, even though those are also added to the poll scores.
+  - After 10 rounds, a special kind of event occurs…
 - Endscreen
   - After 15 rounds, an ending screen shows the final poll distribution as well as all possible and the most probable coalition.
   - Furthermore, the next chancellor is shown. It’s always the candidate from the strongest party within the most probable coalition.
