@@ -532,6 +532,9 @@ class ZufallsEventSeite(tk.Frame):
         wahlkampf_seite = self.controller.frames["WahlkampfSeite"]
         current_party = wahlkampf_seite.get_own_party()
 
+        # Poll-Daten vor dem Event speichern
+        previous_polls = wahlkampf_seite.get_current_polls().copy()
+
         # Simuliere die Wählerwanderung basierend auf dem Gewicht
         own_change = self.simulate_voter_shift_event(action_weight, current_party)
         # Aktualisiere die Polls in der Wahlkampf-Seite
@@ -539,6 +542,14 @@ class ZufallsEventSeite(tk.Frame):
         self.normalize_polls()
         # Wechsel zurück zur Wahlkampf-Seite
         self.controller.show_frame("WahlkampfSeite")
+
+        # Zeige die Änderungen an
+        wahlkampf_seite.update_poll_changes(
+            current_party,
+            "Zufalls-Event",
+            own_change,
+            {party: wahlkampf_seite.polls[party] - previous_polls[party] for party in wahlkampf_seite.polls if party != current_party}
+        )
 
     def simulate_voter_shift_event(self, action_weight, current_party):
         """Simuliert die Veränderung der Wählerstimmen basierend auf dem Gewicht der Aktion."""
@@ -579,7 +590,6 @@ class ZufallsEventSeite(tk.Frame):
             wahlkampf_seite.polls[party] = round(wahlkampf_seite.polls[party] / total * 100, 1)
 
 class TVDebatteSeite(tk.Frame):
-
     def __init__(self, parent, controller):
         super().__init__(parent, bg="white")
         self.controller = controller
@@ -682,6 +692,11 @@ class TVDebatteSeite(tk.Frame):
         """Berechnet die finalen Gewichtungen basierend auf den Eingaben."""
         wahlkampf_seite = self.controller.frames["WahlkampfSeite"]
         current_party = wahlkampf_seite.get_own_party()
+
+        # Poll-Daten vor dem Event speichern
+        previous_polls = wahlkampf_seite.get_current_polls().copy()
+
+        # own_score für TV-Debatte berechnen
         kandidat = kandidaten.get(current_party, {})
         f_weight = (self.strategy_sliders.get("Faktenbasiertheit").get() * kandidat.get("kompetenz", 0))
         p_weight = (self.strategy_sliders.get("Populismus").get() * kandidat.get("ambition", 0))
@@ -689,11 +704,27 @@ class TVDebatteSeite(tk.Frame):
         a_weight = (self.strategy_sliders.get("Angriffslust").get() * (kandidat.get("ambition", 0) + kandidat.get("beliebtheit", 0) / 2))
         h_weight = (self.strategy_sliders.get("Humor").get() * (kandidat.get("kompetenz", 0) + kandidat.get("beliebtheit", 0) / 2))
         own_score = (f_weight + p_weight + s_weight + a_weight + h_weight) / 300
+
+        # Gewicht für eigene Partei zufällig auf Basis von own_score
         own_weight = random.uniform(-1 + own_score, own_score)
+
+        # Simuliere Wählerwanderung
         own_change = self.simulate_voter_shift_tvdebatte(own_weight, current_party)
+
+        # Aktualisiere die Polls in der Wahlkampf-Seite
         wahlkampf_seite.polls[current_party] += own_change
         self.normalize_polls()
+
+        # Wechsel zurück zur Wahlkampf-Seite
         self.controller.show_frame("WahlkampfSeite")
+
+        # Zeige die Änderungen an
+        wahlkampf_seite.update_poll_changes(
+            current_party,
+            "TV-Debatte",
+            own_change,
+            {party: wahlkampf_seite.polls[party] - previous_polls[party] for party in wahlkampf_seite.polls if party != current_party}
+        )
 
     def simulate_voter_shift_tvdebatte(self, action_weight, current_party):
         """Simuliert die Veränderung der Wählerstimmen basierend auf dem Gewicht der Aktion."""
