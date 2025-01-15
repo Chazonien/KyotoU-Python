@@ -413,7 +413,7 @@ class ZufallsEventSeite(tk.Frame):
             },
             {
                 "title": "BER plant den 'Terminal für die Zukunft'!",
-                "description": "Ein neuer Terminal am BER wird angekündigt: Diesmal speziell für Hyperloop-Passagiere. Die Kosten sind unklat. Wie reagieren Sie?",
+                "description": "Ein neuer Terminal am BER wird angekündigt: Diesmal speziell für Hyperloop-Passagiere. Die Kosten sind unklar. Wie reagieren Sie?",
                 "image": r"bilder/ber-terminal.png",
                 "options": [
                     {"text": "Feiern Sie das Projekt als Innovation 'Made in Germany'", "weight": random.uniform(-0.25, 0.25)},
@@ -697,7 +697,7 @@ class TVDebatteSeite(tk.Frame):
 
     def simulate_voter_shift_tvdebatte(self, action_weight, current_party):
         """Simuliert die Veränderung der Wählerstimmen basierend auf dem Gewicht der Aktion."""
-        total_shift = random.uniform(15, 20)
+        total_shift = random.uniform(10, 15)
         party_weights = {party: random.uniform(-1, 1) for party in self.controller.frames["WahlkampfSeite"].polls if party != current_party}
 
         positive_sum = sum(w for w in party_weights.values() if w > 0) + max(0, action_weight)
