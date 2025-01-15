@@ -241,6 +241,9 @@ class WahlkampfSeite(tk.Frame):
                 party_change: polls_after[party_change] - polls_before[party_change]
                 for party_change in self.polls if party_change != party
             }
+        
+        # Aktualisiere die Daten in der GUI
+        self.update_data()
 
         # Aktualisiere die GUI
         self.update_polls()
