@@ -292,7 +292,7 @@ class WahlkampfSeite(tk.Frame):
         return own_change
 
     def character_specific_influence(self, party, w1, w2, w3):
-        """Calculates the specific influence of a candidate."""
+        """Berechnungen des spezifischen Einflusses eines Kandidaten."""
         kandidat = kandidaten.get(party, {})
         return (w1 * kandidat.get("kompetenz", 0) +
                 w2 * kandidat.get("beliebtheit", 0) +
