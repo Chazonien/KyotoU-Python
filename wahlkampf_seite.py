@@ -214,11 +214,16 @@ class WahlkampfSeite(tk.Frame):
         self.normalize_polls()
         
         # Event auslösen
-        if random.uniform(0, 1) < 0.4:
+        if random.uniform(0, 1) < 0.4 and self.turns != 10:
             # Wechsle zur ZufallsEventSeite und zeige das Event an
             self.controller.show_frame("ZufallsEventSeite")
             event_seite = self.controller.frames["ZufallsEventSeite"]
             event_seite.zeige_event()
+
+        if self.turns == 10:
+            self.controller.show_frame("TVDebatteSeite")
+            debatte_seite = self.controller.frames["TVDebatteSeite"]
+            debatte_seite.zeige_debatte()
         
         # Rundenzähler aktualisieren
         self.turns += 1
@@ -523,7 +528,7 @@ class ZufallsEventSeite(tk.Frame):
         """Behandelt die Wahl eines Event-Options und aktualisiert die Wählerumfragen."""
         # Gewicht aus der gewählten Option extrahieren
         action_weight = option["weight"]
-
+        
         wahlkampf_seite = self.controller.frames["WahlkampfSeite"]
         current_party = wahlkampf_seite.get_own_party()
 
@@ -538,6 +543,161 @@ class ZufallsEventSeite(tk.Frame):
     def simulate_voter_shift_event(self, action_weight, current_party):
         """Simuliert die Veränderung der Wählerstimmen basierend auf dem Gewicht der Aktion."""
         total_shift = random.uniform(0.5, 5)
+        party_weights = {party: random.uniform(-1, 1) for party in self.controller.frames["WahlkampfSeite"].polls if party != current_party}
+
+        positive_sum = sum(w for w in party_weights.values() if w > 0) + max(0, action_weight)
+        negative_sum = sum(w for w in party_weights.values() if w < 0) + min(0, action_weight)
+
+        party_changes = {}
+        for party, weight in party_weights.items():
+            if weight > 0:
+                party_changes[party] = (weight / positive_sum) * total_shift
+            elif weight < 0:
+                party_changes[party] = -(weight / negative_sum) * total_shift
+            else:
+                party_changes[party] = 0
+
+        wahlkampf_seite = self.controller.frames["WahlkampfSeite"]
+        for party, change in party_changes.items():
+            wahlkampf_seite.polls[party] += change
+
+        own_change = (action_weight / positive_sum) * total_shift if action_weight > 0 else 0
+
+        return own_change
+
+    def normalize_polls(self):
+        """Normalisiert die Poll-Werte."""
+        # Setze negative Werte auf 0
+        wahlkampf_seite = self.controller.frames["WahlkampfSeite"]
+        for party in wahlkampf_seite.polls:
+            if wahlkampf_seite.polls[party] < 0:
+                wahlkampf_seite.polls[party] = 0
+
+        # Normalisiere die Werte, sodass sie insgesamt 100% ergeben       
+        total = sum(wahlkampf_seite.polls.values())
+        for party in wahlkampf_seite.polls:
+            wahlkampf_seite.polls[party] = round(wahlkampf_seite.polls[party] / total * 100, 1)
+
+class TVDebatteSeite(tk.Frame):
+
+    def __init__(self, parent, controller):
+        super().__init__(parent, bg="white")
+        self.controller = controller
+
+        # Punktlimit und Strategien
+        self.max_points = 30
+        self.remaining_points = tk.IntVar(value=self.max_points)
+        self.strategy_sliders = {}
+
+        # Initialisiere Events
+        self.events = self.init_events()
+
+        # Event-Widgets
+        self.label_event_title = tk.Label(self, text="", font=("Arial", 18, "bold"), bg="white")
+        self.label_event_title.pack(pady=10)
+
+        self.label_event_description = tk.Label(self, text="", font=("Arial", 14), bg="white", wraplength=600, justify="center")
+        self.label_event_description.pack(pady=10)
+
+        self.event_image_label = tk.Label(self, bg="white")
+        self.event_image_label.pack(pady=10)
+
+        # Auswahlmöglichkeiten mit Schiebereglern
+        self.options_frame = tk.Frame(self, bg="white")
+        self.options_frame.pack(pady=20)
+
+        # Anzeige für verbleibende Punkte
+        self.remaining_label = tk.Label(self, text=f"Verbleibende Punkte: {self.remaining_points.get()}", font=("Arial", 12), bg="white")
+        self.remaining_label.pack(pady=5)
+
+        # Bestätigungs-Button
+        self.confirm_button = tk.Button(self, text="Bestätigen", font=("Arial", 12), state="disabled", command=self.confirm_selection)
+        self.confirm_button.pack(pady=10)
+
+    def init_events(self):
+        """Initialisiert die Liste der zufälligen Events."""
+        return [
+            {
+                "title": "TV-Debatte zur Primetime!",
+                "description": "Der Höhepunkt des Wahlkampfs: Die TV Debatte im Ersten findet statt und alle Spitzenkandidaten der großen Parteien sind anwesend. Was ist Ihre Strategie um siegreich die Debatte zu verlassen?",
+                "image": r"bilder/tv-debatte.jpg",
+                "options": [
+                    {"text": "Faktenbasiertheit"},
+                    {"text": "Populismus"},
+                    {"text": "Schlagfertigkeit"},
+                    {"text": "Angriffslust"},
+                    {"text": "Humor"}
+                ]
+            }
+        ]
+
+    def zeige_debatte(self):
+        """Zeigt ein zufälliges Event an."""
+        event = random.choice(self.events)
+        self.events.remove(event)
+
+        # Setze Titel und Beschreibung
+        self.label_event_title.config(text=event["title"])
+        self.label_event_description.config(text=event["description"])
+
+        # Lade und zeige das Bild
+        image_path = event["image"]
+        if os.path.exists(image_path):
+            image = Image.open(image_path).resize((300, 200), Image.Resampling.LANCZOS)
+            self.event_image = ImageTk.PhotoImage(image)
+            self.event_image_label.config(image=self.event_image)
+        else:
+            print(f"Fehler: Bildpfad nicht gefunden: {image_path}")
+
+        # Erstelle Schieberegler für Strategien
+        for widget in self.options_frame.winfo_children():
+            widget.destroy()
+
+        for option in event["options"]:
+            frame = tk.Frame(self.options_frame, bg="white")
+            frame.pack(pady=5, fill="x")
+
+            label = tk.Label(frame, text=option["text"], font=("Arial", 12), bg="white")
+            label.pack(side="left", padx=10)
+
+            slider = tk.Scale(frame, from_=0, to=10, orient="horizontal", bg="white", command=self.update_points)
+            slider.pack(side="right", padx=10)
+
+            self.strategy_sliders[option["text"]] = slider
+
+    def update_points(self, *args):
+        """Aktualisiert die verbleibenden Punkte und aktiviert/deaktiviert den Bestätigungs-Button."""
+        total_used = sum(slider.get() for slider in self.strategy_sliders.values())
+        self.remaining_points.set(self.max_points - total_used)
+        self.remaining_label.config(text=f"Verbleibende Punkte: {self.remaining_points.get()}")
+
+        if self.remaining_points.get() < 0:
+            self.remaining_label.config(fg="red")
+            self.confirm_button.config(state="disabled")
+        else:
+            self.remaining_label.config(fg="black")
+            self.confirm_button.config(state="normal" if self.remaining_points.get() == 0 else "disabled")
+
+    def confirm_selection(self):
+        """Berechnet die finalen Gewichtungen basierend auf den Eingaben."""
+        wahlkampf_seite = self.controller.frames["WahlkampfSeite"]
+        current_party = wahlkampf_seite.get_own_party()
+        kandidat = kandidaten.get(current_party, {})
+        f_weight = (self.strategy_sliders.get("Faktenbasiertheit").get() * kandidat.get("kompetenz", 0))
+        p_weight = (self.strategy_sliders.get("Populismus").get() * kandidat.get("ambition", 0))
+        s_weight = (self.strategy_sliders.get("Schlagfertigkeit").get() * (kandidat.get("ambition", 0) + kandidat.get("kompetenz", 0) / 2))
+        a_weight = (self.strategy_sliders.get("Angriffslust").get() * (kandidat.get("ambition", 0) + kandidat.get("beliebtheit", 0) / 2))
+        h_weight = (self.strategy_sliders.get("Humor").get() * (kandidat.get("kompetenz", 0) + kandidat.get("beliebtheit", 0) / 2))
+        own_score = (f_weight + p_weight + s_weight + a_weight + h_weight) / 300
+        own_weight = random.uniform(-1 + own_score, own_score)
+        own_change = self.simulate_voter_shift_tvdebatte(own_weight, current_party)
+        wahlkampf_seite.polls[current_party] += own_change
+        self.normalize_polls()
+        self.controller.show_frame("WahlkampfSeite")
+
+    def simulate_voter_shift_tvdebatte(self, action_weight, current_party):
+        """Simuliert die Veränderung der Wählerstimmen basierend auf dem Gewicht der Aktion."""
+        total_shift = random.uniform(15, 20)
         party_weights = {party: random.uniform(-1, 1) for party in self.controller.frames["WahlkampfSeite"].polls if party != current_party}
 
         positive_sum = sum(w for w in party_weights.values() if w > 0) + max(0, action_weight)
