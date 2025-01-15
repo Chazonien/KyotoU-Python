@@ -1,44 +1,65 @@
 # KyotoU-Python
-Soon it will be time: Early elections are scheduled for February in Germany. The current 
-period is marked by crises in the European region and dissatisfaction with the last coalition. In 
-such uncertain times, it would be irresponsible to leave the election campaign solely in the 
-hands of politicians. That’s why we’ve decided to develop a turn-based election campaign game 
-in tKinter. This game will allow players to choose the leading candidate of one of the major 
-parties (CDU, AfD, SPD, Greens, BSW, FDP, and Left Party) and dive into the campaign. The goal 
-is to gather as many votes as possible to ultimately become the Chancellor of the Federal 
-Republic of Germany. 
-How will the game work? 
-At the start, the player selects the leading candidate they trust the most (or, alternatively, the 
-one they despise the most). Each leading candidate has a two-digit value in each of the three 
-metrics: popularity, competence, and ambition. Additionally, the corresponding party begins 
-with approval ratings based on current polling data (at the time of the game’s creation). In other 
-words, there are effectively varying difficulty levels. Regarding the GUI, we will aim to keep it in a 
-retro style. For the starting screen, we will include retro-style photos of the politicians, as well as 
-labels and buttons for selection. 
-Then, the campaign begins. As mentioned, it is a turn-based game. The current plan is to give 
-players the opportunity to select specific actions during, for example, 10 rounds (e.g., campaign 
-events, social media advertising, debates, flyers & giveaways, or fundraising). Furthermore, each 
-party will have special actions that can only be used once. Depending on the politician’s stats 
-(popularity, competence, and ambition) and a bit of randomness, poll numbers will shift either in 
-their favor or against them. Both the aforementioned metrics and the current poll numbers for all 
-parties can be viewed by the player at any time. However, the outcome of the selected action will 
-not be known in advance. 
-To make the gameplay more dynamic, we also plan to implement an event system. In addition to 
-the 10 action rounds, random events will occur with a certain probability. Here, we aim to 
-include at least one party-specific event in addition to general events. An event will describe a 
-specific situation, such as a flop during a TV debate, and offer the player several choices of 
-action. Depending on the player’s decision, the politician's stats for popularity, competence and 
-ambition will change.  
-For both actions and events, we will primarily use labels, buttons, and photos. To visualize voter 
-shifts, for example, we will likely dynamically update the text on labels. If necessary, we might 
-also work with message boxes or other widgets. 
-After the 10 action rounds and several events, it’s time to cross your fingers. Can the chosen 
-candidate become the next Chancellor of the Federal Republic of Germany? 
-Our aim is to keep the game somewhat satirical and avoid reflecting our own political opinions. 
-Ultimately, every party should be playable to some extent. Regarding the exact implementation, 
-the outlined concept is not set in stone. We may need to make adjustments for pragmatic 
-reasons. 
-We plan to program the game in German, as this feels more natural and allows for wordplay, 
-humor, etc. However, our presentation will be in English, and if necessary, we’ll translate certain 
-parts for presentation purposes to ensure that all students understand our concept and 
-implementation.
+
+## Introduction:
+
+- In February, Germany will hold early elections.
+- Due to the current crises in Europe and the chaotic end of the last coalition in Germany, we decided to create a turn-based election campaign game in Python using Tkinter.
+- Quick disclaimer: The game is satirical, and we tried our best to keep our own political views out of it and avoided highly controversial topics.
+- Although the game is in German (to make it authentic and allow for wordplay), we will explain everything in English so everyone can follow along.
+- A quick structure of our presentation:
+  - Briefly explain the game.
+  - Show that and how it works.
+  - Share challenges we faced during development.
+  - Conclude with some final thoughts.
+________________________________________
+
+## Explanation of the Game and Demo:
+
+- The game is a turn-based election campaign simulator.
+- At the start, players choose the leading candidate of one of the major parties (CDU, AfD, SPD, Greens, BSW, FDP, or the Left Party) and dive into the campaign.
+- Objective: Gather the most votes to become the Chancellor of Germany or at least be part of the coalition.
+________________________________________
+- Start Screen:
+  - Players can enjoy the view on the German parliament and start the game.
+- Candidate Selection:
+  - Players can select their candidate here.
+  - Each candidate has three stats: popularity, competence, and ambition (all two-digit values).
+  - Parties also have initial approval ratings based on real polling data at the time of development. This basically means there are different difficulty levels.
+  - The polling data is shown, once the game has started.
+- Election Campaign:
+  - The campaign lasts 15 weeks/turns (shown by a counter on the bottom right).
+  - Players can perform one action per round, choosing from: Campaign events, Social media ads, Debates, Flyers and giveaways, Fundraising.
+  - There is a special action that is different for each party. Once used, it disappears.
+  - Actions affect poll numbers based on the candidate’s stats and some randomness.
+  - Poll numbers and candidate stats are visible at any time, but how the stats influence specific actions is not shown. Players have to find out with reasoning and intuition and also have to be a little bit lucky.
+  - As you can see, the poll changes are displayed after each action.
+- Dynamic Events
+  - To make the gameplay more dynamic, we also implemented an event system.
+  - Random satirical events out of our event pool occasionally appear during gameplay.
+  - Players must choose from three options.
+  - As for the action, depending on the choice and some randomness, the poll numbers shift.
+  - These events don’t count toward the 15 rounds.
+  - As you can see, the poll changes after an event are also displayed. Only the changes caused by the event choice are displayed, not the changes from the action right before, even though those are also added to the poll scores.
+- Endscreen
+  - After 15 rounds, an ending screen shows the final poll distribution as well as all possible and the most probable coalition.
+  - Furthermore, the next chancellor is shown. It’s always the candidate from the strongest party within the most probable coalition.
+________________________________________
+
+## Challenges and Development Highlights
+
+- Collaboration: We used GitHub to work on the project together.
+- Initial Issues:
+  - We started coding without much structure and struggled with frame transitions.
+  - To fix this, we switched to an object-oriented approach.
+  - A main class manages the container for all different game pages, and each game page (start screen, candidate selection, action page, event page, ending screen) has its own class.
+  - We divided the code into three scripts (basically: main, start, and campaign) to stay organized.
+- Technical/Logical Difficulties
+  - So many technical/logical difficulties.
+  - What we want to show you is the difficulty we had handling some of the calculations behind the scenes, specifically the simulation of the voter shift…
+________________________________________
+
+## Conclusion
+
+- This game has infinite potential and could be made way more complex.
+- We thought about implementing an election budget system or animations in the beginning, but at some point, we had to stop.
+- Overall, we believe that we found a good compromise between complexity and feasibility.
