@@ -161,6 +161,7 @@ class WahlkampfSeite(tk.Frame):
                 self.actions_frame,
                 text=action,
                 font=("Arial", 12),
+                cursor="hand2",
                 command=lambda a=action: self.perform_action(partei, a)
             ).pack(side="top", pady=5)
 
@@ -171,6 +172,7 @@ class WahlkampfSeite(tk.Frame):
                 self.actions_frame,
                 text=f"Spezialaktion: {special_action}",
                 font=("Arial", 12, "bold"),
+                cursor="hand2",
                 fg="red",
                 command=lambda: self.perform_action(partei, special_action)
             ).pack(side="top", pady=10)
@@ -521,6 +523,7 @@ class ZufallsEventSeite(tk.Frame):
                 self.options_frame,
                 text=option["text"],
                 font=("Arial", 12),
+                cursor="hand2",
                 command=lambda o=option: self.handle_event_choice(o)
             ).pack(pady=5)
 
@@ -621,7 +624,7 @@ class TVDebatteSeite(tk.Frame):
         self.remaining_label.pack(pady=5)
 
         # Bestätigungs-Button
-        self.confirm_button = tk.Button(self, text="Bestätigen", font=("Arial", 12), state="disabled", command=self.confirm_selection)
+        self.confirm_button = tk.Button(self, text="Bestätigen", font=("Arial", 12), cursor="hand2", state="disabled", command=self.confirm_selection)
         self.confirm_button.pack(pady=10)
 
     def init_events(self):
@@ -670,7 +673,7 @@ class TVDebatteSeite(tk.Frame):
             label = tk.Label(frame, text=option["text"], font=("Arial", 12), bg="white")
             label.pack(side="left", padx=10)
 
-            slider = tk.Scale(frame, from_=0, to=10, orient="horizontal", bg="white", command=self.update_points)
+            slider = tk.Scale(frame, from_=0, to=10, orient="horizontal", cursor="hand2", bg="white", command=self.update_points)
             slider.pack(side="right", padx=10)
 
             self.strategy_sliders[option["text"]] = slider
