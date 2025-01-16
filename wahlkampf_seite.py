@@ -935,11 +935,6 @@ class SpielendeSeite(tk.Frame):
                         if total_seats_combination > majority_threshold:
                             sorted_combination = sorted(combination, key=lambda party: seat_distribution[party], reverse=True)
                             possible_coalitions.append((sorted_combination, total_seats_combination))
-                
-                elif total_seats_combination > majority_threshold:
-                    # Für 2-Parteien-Kombinationen direkt hinzufügen
-                    sorted_combination = sorted(combination, key=lambda party: seat_distribution[party], reverse=True)
-                    possible_coalitions.append((sorted_combination, total_seats_combination))
 
         # Bestimme die Koalition mit der höchsten Bewertung
         beste_koalition = self.bestimme_best_koalition([coalition for coalition, _ in possible_coalitions], seat_distribution)
